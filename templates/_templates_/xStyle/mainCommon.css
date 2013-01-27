@@ -1,0 +1,98 @@
+.SecurityDisabled{
+  display:none !important;
+}
+
+.LogicDisabled{
+display:none !important;
+
+}
+.LogicalHide{
+display:none !important;
+
+}
+
+.largeIconSpan{
+  display:inline-block; 
+  border-style:none;
+  text-align:center;
+  padding:15px;
+  margin:15px;
+}
+
+.sprite64Icon{
+  display:inline-block;
+  height:64px;
+  width:64px;
+  background:url(images/consolidatedIcons.png) no-repeat;
+  padding: 0 0 0 0;
+}
+
+.sprite32Icon{
+  display:inline-block;
+  height:32px;
+  width:32px;
+  background:url(images/consolidatedIcons.png) no-repeat;
+  padding: 0 0 0 0;
+}
+.sprite16Icon{
+  display:inline-block;
+  height:16px;
+  width:16px;
+  background:url(images/consolidatedIcons.png) no-repeat;
+  padding: 0 0 0 0;
+}
+
+
+.peopleIcon{
+  background-position:0px -100px;
+}
+.learnMoreIcon{
+  background-position:0px -200px;
+}
+.helpIcon{
+  background-position:0px -300px;
+}
+.keyIcon{
+  background-position:0px -400px;
+}
+.keyManIcon{
+  background-position:0px -500px;
+}
+.plusIcon{
+  background-position:0px -268px;
+
+}
+.cancelIcon{
+  background-position:-32px -268px;
+
+}
+.logIcon{
+  background-position:0px -575px;
+}
+.lightningFolderIcon{
+  background-position:0px -650px;
+}
+.lockIcon{
+  background-position:0px -725px;
+}
+.askForHelpIcon{
+background-position:0px -800px;
+
+}
+
+.remoteIcon{
+background-position:0px -875px;
+
+}
+
+.smallPlusIcon{
+background-position:0px -180px;
+
+}
+.smallCancelIcon{
+background-position:-20px -180px;
+
+}
+
+
+

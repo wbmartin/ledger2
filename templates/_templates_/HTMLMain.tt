@@ -1,0 +1,42 @@
+[%- FILTER redirect("/index.html") -%]
+<!DOCType html>
+<!--Generated: [%genDate%] -->
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-37053410-1']);
+    _gaq.push(['_setDomainName', 'martinanalytics.com']);
+    _gaq.push(['_trackPageview','InitialLoad']);
+    (function() {
+     var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+     ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+     var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+     })();
+   </script>
+   <style type="text/css">
+     [%INCLUDE xStyle/1140.css%]
+     [%INCLUDE xStyle/mainCommon.css%]
+     [%INCLUDE xStyle/mainWeb.css%]
+   </style>
+ </head>
+<body> 
+<form>
+	<input type="text" name="historyTrackerId" id = "historyTrackerId" style="display:none;" >
+</form>
+<div id="EmptyDivId" class="LogicalHide"><!--dispatchercommon.html --> &nbsp; </div>
+<div id="mainContent"></div>
+<div id="LoggerConsoleDivId" class="LogicalHide">
+  <fieldset class="goog-debug-panel">
+    <legend>Event Log</legend>
+    <div id="loggerConsole"></div>
+  </fieldset>
+</div>
+
+<script src="http://localhost:9810/compile?id=app-debug&mode=RAW"></script>
+<script>app.start('mainContent')</script>
+<p>Generated: [%genDate%]</p>
+</body>
+</html>
+[%- END #filter -%]

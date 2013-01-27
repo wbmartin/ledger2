@@ -1,0 +1,88 @@
+<project name="ledger" default="build" basedir=".">
+  <description>
+    General Ledger Build
+  </description>
+  <property name="template.dir" value="${basedir}/templates/"/>
+  <property name="templategen.dir" value="${template.dir}/_gen_/"/>
+  <property name="build.dir" value="${basedir}/build/"/>
+  <property name="home.dir" value="/home/wbmartin/"/>
+  <target name="generateTemplates">
+    <exec dir="${template.dir}" executable="perl">
+      <arg value="generateTemplates.pl"/>
+      <arg value="."/>
+    </exec>
+  </target>
+  <target name="debug-push" depends="generateTemplates">
+    <copy file="${templategen.dir}/index.html" todir="${build.dir}"/>
+  </target>
+  <target name="build" depends="init,build-clean"></target>
+  <target name="plovr-start">
+    <exec executable="java" spawn="true">
+      <arg line="-jar ${home.dir}/dev/plovr/plovr-eba786b34df9.jar serve plovr-debug.config "/>
+    </exec> 
+  </target>
+<target name="plovr-publish">
+    <exec executable="java" output="${basedir}/deploy/app-compiled.js" logError="true">
+      <arg line="-jar ${home.dir}/dev/plovr/plovr-eba786b34df9.jar build plovr-prod.config"/>
+    </exec> 
+  </target>
+
+<target name="init">
+    <!-- Create the time stamp -->
+    <tstamp/>
+  </target>
+
+  <target name="build-clean">
+    <delete>
+      <fileset dir="${templategen.dir}"/>    
+    </delete>
+  </target>
+<target name="lint" depends="cleanSource">
+  <exec executable="gjslint" failonerror="true" logError="true">
+    <arg value="${basedir}/src/*" />
+  </exec>
+</target>
+
+  <target name="cleanSource">
+         <fileset id="srcjs" dir="${basedir}/src/" > 
+      <include name ="**/*.js"/>
+    </fileset>
+    <pathconvert pathsep=" " property="jsfiles" refid="srcjs"/>
+    <echo message="${jsfiles}"/>
+    <exec dir="${basedir}" executable="perl">
+      <arg line="-p -i -e 's/[\t]+/  /g'"/>
+      <arg line="${jsfiles}"/>
+    </exec>
+    <exec dir="${basedir}" executable="perl">
+      <arg line="-p -i -e 's/[ \t]+$//g'"/>
+      <arg line="${jsfiles}"/>
+    </exec>
+     <exec dir="${basedir}" executable="perl">
+      <arg line="-p -i -e 's/function \(/function(/g'"/>
+      <arg line="${jsfiles}"/>
+    </exec>
+  </target>
+
+
+</project>
+
+
+<!--
+Initial Setup
+vi /etc/apache2/sites-available/default
+>>>>>>>>>>>>>>>>>>>>>>>
+ScriptAlias /ledger2/cgi-bin/ /home/wbmartin/www/ledger2/deploy/cgi-bin/
+  <Directory "/home/wbmartin/www/ledger2/deploy/cgi-bin">
+               AllowOverride None
+               Options +ExecCGI -MultiViews +SymLinksIfOwnerMatch
+               Order allow,deny
+               Allow from all
+  </Directory>
+
+>>>>>>>>>>>>>>>
+
+sudo ln -s /home/wbmartin/www/ledger2 /var/www/ledger2
+sudo /etc/init.d/apache2 restart
+
+-->
+
