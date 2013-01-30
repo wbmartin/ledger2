@@ -15,7 +15,7 @@
   <target name="debug-push" depends="generateTemplates">
     <copy file="${templategen.dir}/index.html" todir="${build.dir}"/>
   </target>
-  <target name="build" depends="init,build-clean"></target>
+  <target name="build" depends="init,build-clean,debug-push"></target>
   <target name="plovr-start">
     <exec executable="java" spawn="true">
       <arg line="-jar ${home.dir}/dev/plovr/plovr-eba786b34df9.jar serve plovr-debug.config "/>
