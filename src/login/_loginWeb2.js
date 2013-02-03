@@ -1,46 +1,34 @@
 goog.provide('LoginWeb');
+goog.require('ma.CONST');
 goog.require('ma.ui');
 goog.require('ma.form.ColumnLayout');
-//goog.require('LoginWeb.View');
+goog.require('goog.debug.Logger');
+goog.require('ma.LoginWebView');
 
 /**
  * @extends {PageHelper}
  * @constructor
  */
 LoginWeb = function(){
-
+ this.logger_.setLevel(ma.CONST.DEFAULT_LOG_LEVEL);
 };
-
-
-LoginWeb.prototype.show = function(container) {
-  //app.LoginWeb.LoginWeb.logger_.setLevel(App.GLOBAL.LOG_LEVEL);
-  //this.init('Login');
-  //goog.events.listenOnce(App.GLOBAL.onScreenPageTarget, 'DIPOSE_ALL', this.dispose, false, this);
-  //goog.Disposable.call(this);
-  //
-  //  app.setMainContent(app.LoginWeb.View.getPrimary(null, null));
-  var fl1 = new ma.form.ColumnLayout();
-  fl1.addField('userid');
-  fl1.render(container);
-  //var tbl = goog.dom.createDom('table');
-  //this.userfld = new ma.ui.inputTextValidation(tbl);
-  //goog.dom.append(container, tbl);
-  //goog.dom.append(container, this.userfld);
-  
- // this.eh1.listen(
- //     goog.dom.getElement('cmdlogin'),
- //     goog.events.EventType.CLICK,
- //     this.attemptLogin
- //     );
-}
 
 /**
  * A reference to the  logger
  * @type {goog.debug.Logger}
  * @private
  */
-//app.LoginWeb.prototype.logger_ = goog.debug.Logger.getLogger('Login');
+LoginWeb.prototype.logger_ =
+    goog.debug.Logger.getLogger('LoginWeb');
 
+
+LoginWeb.prototype.show = function(container) {
+  this.logger_.severe('show called'); 
+  app.setMainContent(ma.LoginWebView.getPrimary());
+  this.fl1 = new ma.form.ColumnLayout();
+  this.fl1.addField('userid');
+  this.fl1.render(container);
+}
 
 /**
  *  

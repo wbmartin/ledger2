@@ -1,4 +1,4 @@
-// Copyright 2013 martinanalytics. All Rights Reserved.
+// Copyright 2007 martinanalytics. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,10 +13,10 @@
 // limitations under the License.
 
 /**
- * @fileoverview A component.
+ * @fileoverview A login component.
  *
  */
-goog.provide('CLASSNAME');
+goog.provide('ma.Login');
 
 goog.require('goog.dom');
 goog.require('goog.dom.classes');
@@ -25,19 +25,19 @@ goog.require('goog.events.EventType');
 goog.require('goog.events.KeyCodes');
 goog.require('goog.events.KeyHandler');
 goog.require('goog.events.KeyHandler.EventType');
-goog.require('goog.ui.Component');
+goog.require('goog.ui.Container');
+goog.require('ma.LoginWebView');
 
 
 
 /**
   * @param {goog.dom.DomHelper=} opt_domHelper DOM helper to use.
  *
- * @extends {goog.ui.Component}
+ * @extends {goog.ui.Container}
  * @constructor
  */
-CLASSNAME = function( opt_domHelper) {
-  goog.ui.Component.call(this, opt_domHelper);
-
+ma.Login = function( opt_domHelper) {
+  goog.ui.Container.call(this, opt_domHelper);
 
   /**
    * Event handler for this object.
@@ -55,26 +55,29 @@ CLASSNAME = function( opt_domHelper) {
    */
   this.kh_ = null;
 };
-goog.inherits(CLASSNAME, goog.ui.Component);
+goog.inherits(ma.Login, goog.ui.Container);
 
 
 
 /**
  * Creates an initial DOM representation for the component.
  */
-CLASSNAME.prototype.createDom = function() {
+ma.Login.prototype.createDom = function() {
   this.decorateInternal(this.dom_.createElement('div'));
 };
 
 
 /**
- * Decorates an existing HTML DIV element as a SampleComponent.
+ * Decorates an existing HTML DIV element as a SampleContainer.
  *
  * @param {Element} element The DIV element to decorate. The element's
  *    text, if any will be used as the component's label.
  */
-CLASSNAME.prototype.decorateInternal = function(element) {
-  CLASSNAME.superClass_.decorateInternal.call(this, element);
+ma.Login.prototype.decorateInternal = function(element) {
+  ma.Login.superClass_.decorateInternal.call(this, element);
+   
+   goog.dom.appendChild(element,
+      goog.dom.htmlToDocumentFragment(ma.LoginWebView.top() ));
   
   this.kh_ = new goog.events.KeyHandler(element);
   this.eh_.listen(this.kh_, goog.events.KeyHandler.EventType.KEY, this.onKey_);
@@ -82,8 +85,8 @@ CLASSNAME.prototype.decorateInternal = function(element) {
 
 
 /** @override */
-CLASSNAME.prototype.disposeInternal = function() {
-  CLASSNAME.superClass_.disposeInternal.call(this);
+ma.Login.prototype.disposeInternal = function() {
+  ma.Login.superClass_.disposeInternal.call(this);
   this.eh_.dispose();
   if (this.kh_) {
     this.kh_.dispose();
@@ -94,8 +97,8 @@ CLASSNAME.prototype.disposeInternal = function() {
 /**
  * Called when component's element is known to be in the document.
  */
-CLASSNAME.prototype.enterDocument = function() {
-  CLASSNAME.superClass_.enterDocument.call(this);
+ma.Login.prototype.enterDocument = function() {
+  ma.Login.superClass_.enterDocument.call(this);
   this.eh_.listen(this.getElement(), goog.events.EventType.CLICK,
       this.onDivClicked_);
 };
@@ -105,10 +108,9 @@ CLASSNAME.prototype.enterDocument = function() {
  * Called when component's element is known to have been removed from the
  * document.
  */
-CLASSNAME.prototype.exitDocument = function() {
-  CLASSNAME.superClass_.exitDocument.call(this);
+ma.Login.prototype.exitDocument = function() {
+  ma.Login.superClass_.exitDocument.call(this);
   this.eh_.unlisten(this.getElement(), goog.events.EventType.CLICK,
       this.onDivClicked_);
 };
-
 
