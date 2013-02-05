@@ -1,6 +1,5 @@
 goog.provide('LoginWeb');
 goog.require('ma.CONST');
-goog.require('ma.ui');
 goog.require('ma.form.ColumnLayout');
 goog.require('goog.debug.Logger');
 goog.require('ma.LoginWebView');

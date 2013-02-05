@@ -36,7 +36,7 @@ goog.require('goog.ui.Component');
  * @extends {goog.ui.Component}
  * @constructor
  */
-ma.form.ColumnInput = function( inputDescriptor, opt_domHelper) {
+ma.form.ColumnInput = function(inputDescriptor, opt_domHelper) {
   goog.ui.Component.call(this, opt_domHelper);
   /**
    * @type ma.input
@@ -79,10 +79,13 @@ ma.form.ColumnInput.prototype.createDom = function() {
  */
 ma.form.ColumnInput.prototype.decorateInternal = function(element) {
   ma.form.ColumnInput.superClass_.decorateInternal.call(this, element);
-  this.inputfield = goog.dom.createDom('input',{name: this.input.name});
-  goog.dom.appendChild(element,goog.dom.createDom('td'));
-  goog.dom.appendChild(element,goog.dom.createDom('td',null,this.inputfield) );
-  goog.dom.appendChild(element,goog.dom.createDom('td'));
+  this.inputfield = this.input.create();
+  goog.dom.appendChild(element,
+      goog.dom.createDom('td',{'class': 'bold-text'},
+        goog.dom.htmlToDocumentFragment(this.input.label)));
+  goog.dom.appendChild(element,goog.dom.createDom('td',null,this.inputfield));
+  this.validationMessage = goog.dom.createDom('td',{'class': 'validationMessage'});
+  goog.dom.appendChild(element, this.validationMessage);
 
   
   //this.kh_ = new goog.events.KeyHandler(this.element);

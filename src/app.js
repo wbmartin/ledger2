@@ -35,10 +35,17 @@ app.setMainContent = function(contentBlock) {
 
 app.showLoginWeb = function (){
   app.logger_.finest('showLoginWeb called');
-  //app.loginWeb = new LoginWeb();
-  //app.loginWeb.show(app.primaryContainer);
-  app.loginWeb = new ma.Login();
+  if (app.loginWeb === undefined){
+    app.loginWeb = new ma.Login();
+  }
   app.loginWeb.render(app.primaryContainer);
+}
+
+app.closeOpenViews = function (){
+
+}
+
+app.registerOpenView = function(){
 
 }
 
