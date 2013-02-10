@@ -96,5 +96,12 @@ background-position:-20px -180px;
 
 
 .bold-text {
-font-weight: bold;
+  font-weight: bold;
+}
+
+.columnInputTable {
+width: 100%;
+}
+#form1 {
+width: 50%;  
 }

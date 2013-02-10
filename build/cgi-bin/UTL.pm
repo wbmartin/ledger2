@@ -25,18 +25,9 @@ sub getEmailPassword(){ return '567tyughj';}
 sub parseParams(){
 	my $params = shift;
   while ( my ($key, $value) = each($params) ) {
-          print STDERR "\t$key => $value\n" ;#if ($key ne "password");
+          print STDERR "\t$key => $value\n" if ($key ne "password");
     	}
-
-#	my $keywords = from_json($params->{"keywords"});
-#	if($debug){ #print some debugging info    
-#	print STDERR "Script running - Parameters received:\n";
-#  	while ( my ($key, $value) = each(%{$keywords}) ) {
-#          print STDERR "\t$key => $value\n" if ($key ne "password");
-#    	}
-#  }
-#	$params = $keywords;
-return $params;
+  return $params;
 }
 
 sub dbConnect{

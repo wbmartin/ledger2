@@ -1,4 +1,4 @@
-// Copyright 2007 The Closure Library Authors. All Rights Reserved.
+// Copyright 2013 martinanalytics. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -30,7 +30,7 @@ goog.require('goog.ui.Component');
 
 
 /**
- * @param {ma.input} the input descriptor.
+ * @param {ma.input} inputDescriptor the input descriptor.
  * @param {goog.dom.DomHelper=} opt_domHelper DOM helper to use.
  *
  * @extends {goog.ui.Component}
@@ -81,15 +81,18 @@ ma.form.ColumnInput.prototype.decorateInternal = function(element) {
   ma.form.ColumnInput.superClass_.decorateInternal.call(this, element);
   this.inputfield = this.input.create();
   goog.dom.appendChild(element,
-      goog.dom.createDom('td',{'class': 'bold-text'},
+      goog.dom.createDom('td', {'class': 'bold-text'},
         goog.dom.htmlToDocumentFragment(this.input.label)));
-  goog.dom.appendChild(element,goog.dom.createDom('td',null,this.inputfield));
-  this.validationMessage = goog.dom.createDom('td',{'class': 'validationMessage'});
+  goog.dom.appendChild(element,
+      goog.dom.createDom('td', null, this.inputfield));
+  this.validationMessage = goog.dom.createDom('td',
+      {'class': 'validationMessage'});
   goog.dom.appendChild(element, this.validationMessage);
 
-  
+
   //this.kh_ = new goog.events.KeyHandler(this.element);
-  //this.eh_.listen(this.kh_, goog.events.KeyHandler.EventType.KEY, this.onKey_);
+  //this.eh_.listen(this.kh_,
+  //goog.events.KeyHandler.EventType.KEY, this.onKey_);
 };
 
 

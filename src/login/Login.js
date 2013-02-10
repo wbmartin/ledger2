@@ -1,4 +1,4 @@
-// Copyright 2007 martinanalytics. All Rights Reserved.
+// Copyright 2013 martinanalytics. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,16 +20,17 @@ goog.provide('ma.Login');
 
 goog.require('goog.dom');
 goog.require('goog.dom.classes');
+goog.require('goog.dom.forms');
 goog.require('goog.events.EventHandler');
 goog.require('goog.events.EventType');
 goog.require('goog.events.KeyCodes');
 goog.require('goog.events.KeyHandler');
 goog.require('goog.events.KeyHandler.EventType');
+goog.require('goog.net.XhrIo');
 goog.require('goog.ui.Component');
 goog.require('ma.LoginWebView');
-
 goog.require('ma.form.ColumnLayout');
-
+goog.require('ma.ui.util');
 
 
 /**
@@ -38,8 +39,9 @@ goog.require('ma.form.ColumnLayout');
  * @extends {goog.ui.Component}
  * @constructor
  */
-ma.Login = function( opt_domHelper) {
+ma.Login = function(opt_domHelper) {
   goog.ui.Component.call(this, opt_domHelper);
+
 
   /**
    * Event handler for this object.
@@ -77,25 +79,38 @@ ma.Login.prototype.createDom = function() {
  */
 ma.Login.prototype.decorateInternal = function(element) {
   ma.Login.superClass_.decorateInternal.call(this, element);
-
-  //goog.dom.appendChild(element, goog.dom.htmlToDocumentFragment(ma.LoginWebView.top()));
-  goog.dom.appendChild(element, soy.renderAsFragment(ma.LoginWebView.top));
+  //goog.dom.appendChild(element,
+    //goog.dom.htmlToDocumentFragment(ma.LoginWebView.top()));
+  //goog.dom.appendChild(element, \
+      //soy.renderAsFragment(ma.LoginWebView.top));
+  soy.renderElement(element, ma.LoginWebView.top);
   this.fl1 = new ma.form.ColumnLayout();
-  var userid = new ma.input('userid');
+  var userid = new ma.input('user_id');
   userid.label = 'User Id';
+  userid.value = 'ledger';
   userid.type = 'text';
   this.fl1.addField(userid);
 
   var passwd = new ma.input('password');
   passwd.label = 'Password';
   passwd.type = 'password';
+  passwd.value = 'ledger';
   this.fl1.addField(passwd);
-  
-  this.fl1.render(element);
 
+  //this.fl1.render(element);
+  var d = goog.dom.createDom('div', {'id': 'form1' });
+  this.fl1.decorate(d);
+  goog.dom.appendChild(element, d);
+
+  this.loginButton = goog.dom.createDom('button', null, 'Login');
+  goog.dom.appendChild(element, this.loginButton);
+
+  this.eh_.listen(this.loginButton,
+      goog.events.EventType.CLICK, this.submitLoginCreds);
 
   //this.kh_ = new goog.events.KeyHandler(element);
-  //this.eh_.listen(this.kh_, goog.events.KeyHandler.EventType.KEY, this.onKey_);
+  //this.eh_.listen(this.kh_,
+      //goog.events.KeyHandler.EventType.KEY, this.onKey_);
 };
 
 
@@ -129,3 +144,31 @@ ma.Login.prototype.exitDocument = function() {
  //     this.onDivClicked_);
 };
 
+
+/**
+ *
+ *
+ */
+ma.Login.prototype.submitLoginCreds = function() {
+  var qdstr = goog.dom.forms.getFormDataString(this.fl1.formDom);
+  qdstr += ma.ui.util.resourceAction('SECURITY_USER', 'AUTHENTICATE');
+  goog.net.XhrIo.send(ma.CONST.PRIMARY_SERVER_URL,
+        this.handleLoginResponse, 'POST', qdstr);
+};
+
+
+/**
+ * @param {goog.events.Event} e the event.
+ *
+ *
+ */
+ma.Login.prototype.handleLoginResponse = function(e) {
+  /** @type {Object} */
+    var obj = e.target.getResponseJson();
+    var session = obj['rows'][0]['session_id'];
+    if (session !== '') {
+      ma.GLOBAL.pages.dispatchEvent(new ma.plEvent('TEST', '2'));
+    } else {
+      alert('failed');
+    }
+};

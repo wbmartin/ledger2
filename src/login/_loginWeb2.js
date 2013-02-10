@@ -1,14 +1,14 @@
 goog.provide('LoginWeb');
-goog.require('ma.CONST');
-goog.require('ma.form.ColumnLayout');
 goog.require('goog.debug.Logger');
+goog.require('ma.CONST');
 goog.require('ma.LoginWebView');
+goog.require('ma.form.ColumnLayout');
 
 /**
  * @extends {PageHelper}
  * @constructor
  */
-LoginWeb = function(){
+LoginWeb = function() {
  this.logger_.setLevel(ma.CONST.DEFAULT_LOG_LEVEL);
 };
 
@@ -20,17 +20,20 @@ LoginWeb = function(){
 LoginWeb.prototype.logger_ =
     goog.debug.Logger.getLogger('LoginWeb');
 
-
+/**
+ *
+ * @param {object} container the container.
+ */
 LoginWeb.prototype.show = function(container) {
-  this.logger_.severe('show called'); 
+  this.logger_.severe('show called');
   app.setMainContent(ma.LoginWebView.getPrimary());
   this.fl1 = new ma.form.ColumnLayout();
   this.fl1.addField('userid');
   this.fl1.render(container);
-}
+};
 
 /**
- *  
+ *
  *  @return {boolean} false to not refresh the page.
  */
 LoginWeb.attemptLogin = function() {
@@ -50,7 +53,7 @@ LoginWeb.attemptLogin = function() {
     if (session != '') {
       app.standardSuccessfulLogin(session);
     } else {
-      alert ('failed');
+      alert('failed');
     }
   };
   app.svrCall(callBack, qstr);

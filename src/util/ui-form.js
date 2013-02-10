@@ -1,12 +1,12 @@
 goog.provide('ma.form.ColumnLayout');
-goog.require('ma.form.ColumnInput');
-goog.require('ma.input');
 goog.require('goog.dom');
-goog.require('goog.ui.Component');
 goog.require('goog.events.KeyHandler');
 goog.require('goog.events.KeyHandler.EventType');
+goog.require('goog.ui.Component');
+goog.require('ma.form.ColumnInput');
+goog.require('ma.input');
 /**
- * 
+ *
  * @param {goog.dom.DomHelper=} opt_domHelper DOM helper to use.
  *
  * @extends {goog.ui.Component}
@@ -31,22 +31,22 @@ ma.form.ColumnLayout = function(opt_domHelper) {
    */
   this.kh_ = null;
 
-}
+};
 goog.inherits(ma.form.ColumnLayout, goog.ui.Component);
 
 /**
  *
- * @param {ma.input} fld
+ * @param {ma.input} fld the field.
  */
-ma.form.ColumnLayout.prototype.addField = function(fld){
+ma.form.ColumnLayout.prototype.addField = function(fld) {
   this.fieldList.push(fld);
 
-}
+};
 /**
  * Creates an initial DOM representation for the component.
  */
 ma.form.ColumnLayout.prototype.createDom = function() {
-  this.decorateInternal(this.dom_.createElement('table'));
+  this.decorateInternal(this.dom_.createElement('div'));
 };
 
 /**
@@ -59,19 +59,26 @@ ma.form.ColumnLayout.prototype.decorateInternal = function(element) {
   ma.form.ColumnLayout.superClass_.decorateInternal.call(this, element);
 
   var elem = this.getElement();
+
   //goog.dom.classes.add(elem, goog.getCssName('goog-sample-component'));
   //elem.style.backgroundColor = this.color_;
   //elem.tabIndex = 0;
   //var tr = goog.dom.createDom('tr');
   //goog.dom.appendChild(elem, tr);
+  this.formDom = goog.dom.createDom('form');
+
+  var holdingTable = goog.dom.createDom('table', {'class': 'columnInputTable'});
   var fieldListLength = this.fieldList.length;
   this.inputs = new Array();
-  for (var i = 0; i < fieldListLength; i++){
+  for (var i = 0; i < fieldListLength; i++) {
     this.inputs.push(new ma.form.ColumnInput(this.fieldList[i]));
-    this.inputs[i].render(elem);
+    this.inputs[i].render(holdingTable);
   }
+  goog.dom.appendChild(this.formDom, holdingTable);
+  goog.dom.appendChild(element, this.formDom);
   //this.kh_ = new goog.events.KeyHandler(elem);
-  //this.eh_.listen(this.kh_, goog.events.KeyHandler.EventType.KEY, this.onKey_);
+  //this.eh_.listen(this.kh_,
+      //goog.events.KeyHandler.EventType.KEY, this.onKey_);
 };
 
 /** @override */
@@ -92,7 +99,8 @@ ma.form.ColumnLayout.prototype.enterDocument = function() {
 };
 
 /**
- * Called when component's element is known to have been removed fromgoog.require('ma.form.ColumnLayout'); the
+ * Called when component's element is known to have been
+ * removed fromgoog.require('ma.form.ColumnLayout'); the
  * document.
  */
 ma.form.ColumnLayout.prototype.exitDocument = function() {

@@ -30,6 +30,8 @@ if(ref($sth))  {#if we have a successful connection and statement built, execute
     while(my $ref = $sth->fetchrow_hashref()) {
       push(@rows, $ref);
       $rowCount++;
+      
+      #while ( my ($key, $value) = each(%$ref) ) {print STDERR "$key: $value"; }
     }
     #package it up in and print it
     $json->{"rows"} =\@rows;
@@ -92,7 +94,7 @@ print STDERR "Package Successful\n" if($debug);
   }
 
   sub buildResourceActionDef{
-    my $resource =uc(shift);
+    my $resource = uc(shift);
     my $action = uc(shift);
     my ($rad, @stdSelectParamFields,@allFields,@paramFields);
     #Standard ARGS passed to each fucntion  ('CHECK_AUTH', user_id, session_id) passed to all

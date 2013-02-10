@@ -37,10 +37,17 @@
       <fileset dir="${templategen.dir}"/>    
     </delete>
   </target>
-<target name="lint" depends="cleanSource">
+<target name="lint" depends="cleanSource, fixstyle">
   <exec executable="gjslint" failonerror="true" logError="true">
-    <arg value="${basedir}/src/*" />
+    <arg line=" -r ${basedir}/src/" />
   </exec>
+</target>
+
+<target name="fixstyle">
+  <exec executable="fixjsstyle" failonerror="true" logError="true">
+    <arg line=" -r ${basedir}/src/" />
+  </exec>
+
 </target>
 
   <target name="cleanSource">

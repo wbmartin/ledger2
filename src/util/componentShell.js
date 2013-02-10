@@ -35,7 +35,7 @@ goog.require('goog.ui.Component');
  * @extends {goog.ui.Component}
  * @constructor
  */
-CLASSNAME = function( opt_domHelper) {
+CLASSNAME = function(opt_domHelper) {
   goog.ui.Component.call(this, opt_domHelper);
 
 
@@ -75,7 +75,7 @@ CLASSNAME.prototype.createDom = function() {
  */
 CLASSNAME.prototype.decorateInternal = function(element) {
   CLASSNAME.superClass_.decorateInternal.call(this, element);
-  
+
   this.kh_ = new goog.events.KeyHandler(element);
   this.eh_.listen(this.kh_, goog.events.KeyHandler.EventType.KEY, this.onKey_);
 };
