@@ -16,9 +16,8 @@
      })();
    </script>
    <style type="text/css">
-     [%INCLUDE xStyle/1140.css%]
+     [%INCLUDE xStyle/bootstrap.min.css%]
      [%INCLUDE xStyle/mainCommon.css%]
-     [%INCLUDE xStyle/mainWeb.css%]
    </style>
  </head>
 <body> 
