@@ -30,7 +30,7 @@ goog.require('goog.net.XhrIo');
 goog.require('goog.ui.Component');
 goog.require('ma.LoginWebView');
 goog.require('ma.form.ColumnLayout');
-goog.require('ma.ui.util');
+goog.require('ma.uiutil');
 
 
 /**
@@ -84,23 +84,36 @@ ma.Login.prototype.decorateInternal = function(element) {
   //goog.dom.appendChild(element, \
       //soy.renderAsFragment(ma.LoginWebView.top));
   soy.renderElement(element, ma.LoginWebView.top);
-  this.fl1 = new ma.form.ColumnLayout();
-  var userid = new ma.input('user_id');
-  userid.label = 'User Id';
-  userid.value = 'ledger';
-  userid.type = 'text';
-  this.fl1.addField(userid);
+  
+  this.lblUserId = goog.dom.createDom('label',null,'Username');
+  this.txtUserId = goog.dom.createDom('input',{'name': 'user_id','type': 'text'});
+  var trUserId =  ma.uiutil.makerow(this.lblUserId, this.txtUserId);  
 
-  var passwd = new ma.input('password');
-  passwd.label = 'Password';
-  passwd.type = 'password';
-  passwd.value = 'ledger';
-  this.fl1.addField(passwd);
+  this.lblPassword = goog.dom.createDom('label',null,'Password');
+  this.txtPassword = goog.dom.createDom('input',{'name': 'password','type': 'password'});
+  var trPassword =  ma.uiutil.makerow(this.lblPassword, this.txtPassword);
+
+  var t = goog.dom.createDom('table', null, trUserId, trPassword);
+  this.f1 = goog.dom.createDom('form',null,t);
+  goog.dom.appendChild(element,this.f1);
+  //this.fl1 = new ma.form.ColumnLayout();
+  
+  //var userid = new ma.input('user_id');
+  //userid.label = 'User Id';
+  //userid.value = 'ledger';
+  //userid.type = 'text';
+  //this.fl1.addField(userid);
+
+  //var passwd = new ma.input('password');
+  //passwd.label = 'Password';
+  //passwd.type = 'password';
+  //passwd.value = 'ledger';
+  //this.fl1.addField(passwd);
 
   //this.fl1.render(element);
-  var d = goog.dom.createDom('div', {'id': 'form1' });
-  this.fl1.decorate(d);
-  goog.dom.appendChild(element, d);
+  //var d = goog.dom.createDom('div', {'id': 'form1' });
+  //this.fl1.decorate(d);
+  //goog.dom.appendChild(element, d);
 
   this.loginButton = goog.dom.createDom('button', null, 'Login');
   goog.dom.appendChild(element, this.loginButton);
@@ -112,6 +125,7 @@ ma.Login.prototype.decorateInternal = function(element) {
   //this.eh_.listen(this.kh_,
       //goog.events.KeyHandler.EventType.KEY, this.onKey_);
 };
+
 
 
 /** @override */
@@ -150,8 +164,8 @@ ma.Login.prototype.exitDocument = function() {
  *
  */
 ma.Login.prototype.submitLoginCreds = function() {
-  var qdstr = goog.dom.forms.getFormDataString(this.fl1.formDom);
-  qdstr += ma.ui.util.resourceAction('SECURITY_USER', 'AUTHENTICATE');
+  var qdstr = goog.dom.forms.getFormDataString(this.f1);
+  qdstr += ma.uiutil.resourceAction('SECURITY_USER', 'AUTHENTICATE');
   goog.net.XhrIo.send(ma.CONST.PRIMARY_SERVER_URL,
         this.handleLoginResponse, 'POST', qdstr);
 };
