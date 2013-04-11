@@ -2,7 +2,7 @@ goog.provide('LoginWeb');
 goog.require('goog.debug.Logger');
 goog.require('ma.CONST');
 goog.require('ma.LoginWebView');
-goog.require('ma.form.ColumnLayout');
+//goog.require('ma.form.ColumnLayout');
 
 /**
  * @extends {PageHelper}
@@ -27,9 +27,9 @@ LoginWeb.prototype.logger_ =
 LoginWeb.prototype.show = function(container) {
   this.logger_.severe('show called');
   app.setMainContent(ma.LoginWebView.getPrimary());
-  this.fl1 = new ma.form.ColumnLayout();
-  this.fl1.addField('userid');
-  this.fl1.render(container);
+  //this.fl1 = new ma.form.ColumnLayout();
+  //this.fl1.addField('userid');
+  //this.fl1.render(container);
 };
 
 /**

@@ -2,45 +2,6 @@
 /**
  *Login
  */
-{template .getPrimary}
-<!--Begin LoginPortal-->
-<div id="LoginDivId"  class="displayOnLoad">
-  <form id="LoginForm" action="">
-    <div class="formLayout_Standard prettyWrapper" style="width:30em;">
-      <h1>Login</h1>
-      <span class="small" >Please enter your login credentials</span><hr/>
-
-      <div class="formFieldGroup" id="LoginForm-user_idDivId">
-        <!--
-        <label for ="LoginForm-user_id" style="display:inline-block;width:7em;" id="LoginFormLabel-user_id">User ID</label>
-        <input type="text" style="width:15em" name="user_id" id="LoginForm-user_id" class="VALIDATErequired" value="ledger"/>      
-        <span class="ValidationMsg" style="width:0em" id="LoginFormLabel-userIdError"></span>
-        -->
-      </div>
-      <div class="formFieldGroup" id="LoginForm-passwordDivId">
-        <label for ="LoginForm-password" style="display:inline-block;width:7em;" id="LoginFormLabel-password">Password</label>
-        <input type="password" style="width:15em" name="password" id="LoginForm-password" class="VALIDATErequired" value="ledger"/>      
-        <span class="ValidationMsg" style="width:0em" id="LoginFormLabel-passwordError"></span>
-      </div>
-      <div class="text/cssformFieldGroup" id="LoginForm-password_reset_codeDivId" style="display:none">
-        text/css<label for ="LoginForm-password_reset_code" style="display:inline-block;width:7em;" id="LoginFormLabel-password_reset_code">Reset Code</label>
-        text/css<input type="text" style="width:15em" name="password_reset_code" id="LoginForm-password_reset_code" class=""/>      
-        <span class="ValidationMsg" style="width:0em" id="LoginFormLabel-passwordresetCodeError"></span>
-      </div>
-
-
-      <div class="formButtons">
-
-        <button type="button"  id="cmdlogin" class="buttonClass" > <span class="buttonTextClass">Login</span> </button>  
-        <button type="button"  id="cmdOneTimelogin" class="buttonClass " style="display:none;"  onclick="loginCall('one_time')" ><span class="buttonTextClass"> One Time Login</span> </button>  
-      </div>
-      <label for="trustedDeviceId" style="display:inline-block;">Trusted Device:</label>
-      <input type="checkbox" id="LoginForm-trustedDeviceId"/>
-
-    </div>  
-  </form>  
-</div>
-{/template}
 /**
 *
 */

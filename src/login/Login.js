@@ -29,8 +29,8 @@ goog.require('goog.events.KeyHandler.EventType');
 goog.require('goog.net.XhrIo');
 goog.require('goog.ui.Component');
 goog.require('ma.LoginWebView');
-goog.require('ma.form.ColumnLayout');
-goog.require('ma.uiutil');
+goog.require('ma.pages');
+goog.require('ma.uiUtil');
 
 
 /**
@@ -79,41 +79,21 @@ ma.Login.prototype.createDom = function() {
  */
 ma.Login.prototype.decorateInternal = function(element) {
   ma.Login.superClass_.decorateInternal.call(this, element);
-  //goog.dom.appendChild(element,
-    //goog.dom.htmlToDocumentFragment(ma.LoginWebView.top()));
-  //goog.dom.appendChild(element, \
-      //soy.renderAsFragment(ma.LoginWebView.top));
   soy.renderElement(element, ma.LoginWebView.top);
-  
-  this.lblUserId = goog.dom.createDom('label',null,'Username');
-  this.txtUserId = goog.dom.createDom('input',{'name': 'user_id','type': 'text'});
-  var trUserId =  ma.uiutil.makerow(this.lblUserId, this.txtUserId);  
+  var rows = new Array();
 
-  this.lblPassword = goog.dom.createDom('label',null,'Password');
-  this.txtPassword = goog.dom.createDom('input',{'name': 'password','type': 'password'});
-  var trPassword =  ma.uiutil.makerow(this.lblPassword, this.txtPassword);
+  this.lblUserId = goog.dom.createDom('label', null, 'Username');
+  this.txtUserId = goog.dom.createDom('input',
+      {'name': 'user_id', 'type': 'text'});
+  rows[0] = ma.uiUtil.buildJustifiedFormRow(this.lblUserId, this.txtUserId);
 
-  var t = goog.dom.createDom('table', null, trUserId, trPassword);
-  this.f1 = goog.dom.createDom('form',null,t);
-  goog.dom.appendChild(element,this.f1);
-  //this.fl1 = new ma.form.ColumnLayout();
-  
-  //var userid = new ma.input('user_id');
-  //userid.label = 'User Id';
-  //userid.value = 'ledger';
-  //userid.type = 'text';
-  //this.fl1.addField(userid);
+  this.lblPassword = goog.dom.createDom('label', null, 'Password');
+  this.txtPassword = goog.dom.createDom('input',
+      {'name': 'password', 'type': 'password'});
+  rows[1] = ma.uiUtil.buildJustifiedFormRow(this.lblPassword, this.txtPassword);
 
-  //var passwd = new ma.input('password');
-  //passwd.label = 'Password';
-  //passwd.type = 'password';
-  //passwd.value = 'ledger';
-  //this.fl1.addField(passwd);
-
-  //this.fl1.render(element);
-  //var d = goog.dom.createDom('div', {'id': 'form1' });
-  //this.fl1.decorate(d);
-  //goog.dom.appendChild(element, d);
+  this.f1 = ma.uiUtil.buildJustifiedForm(rows);
+  goog.dom.appendChild(element, this.f1);
 
   this.loginButton = goog.dom.createDom('button', null, 'Login');
   goog.dom.appendChild(element, this.loginButton);
@@ -165,8 +145,8 @@ ma.Login.prototype.exitDocument = function() {
  */
 ma.Login.prototype.submitLoginCreds = function() {
   var qdstr = goog.dom.forms.getFormDataString(this.f1);
-  qdstr += ma.uiutil.resourceAction('SECURITY_USER', 'AUTHENTICATE');
-  goog.net.XhrIo.send(ma.CONST.PRIMARY_SERVER_URL,
+  qdstr += ma.uiUtil.resourceAction('SECURITY_USER', 'AUTHENTICATE');
+  goog.net.XhrIo.send(ma.CONST_PRIMARY_SERVER_URL,
         this.handleLoginResponse, 'POST', qdstr);
 };
 
@@ -181,8 +161,19 @@ ma.Login.prototype.handleLoginResponse = function(e) {
     var obj = e.target.getResponseJson();
     var session = obj['rows'][0]['session_id'];
     if (session !== '') {
-      ma.GLOBAL.pages.dispatchEvent(new ma.plEvent('TEST', '2'));
+      ma.pages.dispatchEvent(new ma.plEvent('TEST', '2'));
     } else {
       alert('failed');
     }
 };
+
+ma.pages.addEventListener('LOGIN_PAGE',
+    function(e) {
+      //alert(e.payload);
+      //app.logger_.finest('showLoginWeb called');
+      if (app.loginWeb === undefined) {
+        app.loginWeb = new ma.Login();
+      }
+      app.loginWeb.render(ma.GLOBAL_primaryContainer);
+    }, false);
+

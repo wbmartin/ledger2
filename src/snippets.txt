@@ -1,0 +1,6 @@
+//SOY Functions
+goog.dom.appendChild(element,
+    goog.dom.htmlToDocumentFragment(ma.LoginWebView.top()));
+goog.dom.appendChild(element, 
+      soy.renderAsFragment(ma.LoginWebView.top));
+ soy.renderElement(element, ma.LoginWebView.top);

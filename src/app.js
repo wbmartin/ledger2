@@ -23,11 +23,9 @@ app.start = function() {
   var logconsole =
     new goog.debug.DivConsole(goog.dom.getElement('loggerConsole'));
   logconsole.setCapturing(true);
-  app.logger_.setLevel(ma.CONST.DEFAULT_LOG_LEVEL);
+  app.logger_.setLevel(ma.CONST_DEFAULT_LOG_LEVEL);
   app.logger_.finest('start called');
-  //app.showLoginWeb();
-  //goog.events.dispatchEvent(ma.GLOBAL.pages, new ma.plEvent('LOGIN_PAGE', '2'));
-  ma.GLOBAL.pages.dispatchEvent(new ma.plEvent('LOGIN_PAGE', '2'));
+  ma.pages.dispatchEvent(new ma.plEvent('LOGIN_PAGE', '2'));
 };
 
 /**ma.pages.addEventListener('LOGIN_PAGE', app.showLoginWeb, false);
@@ -36,29 +34,18 @@ app.start = function() {
  */
 app.setMainContent = function(contentBlock) {
   //app.GLOBAL.onScreenPageTarget.dispatchEvent('DISPOSE_ALL');
-  ma.GLOBAL.primaryContainer.innerHTML = contentBlock;
+  ma.GLOBAL_primaryContainer.innerHTML = contentBlock;
 };
 
+
 /**
- * @type {goog.events.EventTarget}
+ * @type {Element}
  */
-ma.GLOBAL.pages = new goog.events.EventTarget();
-ma.GLOBAL.pages.addEventListener('TEST',
-    function(e) { alert('test'); }, false);
+ma.GLOBAL_primaryContainer = goog.dom.getElement('mainContent');
 
 
-
-ma.GLOBAL.pages.addEventListener('LOGIN_PAGE',
-    function(e) {
-      //alert(e.payload);
-      //app.logger_.finest('showLoginWeb called');
-      if (app.loginWeb === undefined) {
-        app.loginWeb = new ma.Login();
-      }
-      app.loginWeb.render(ma.GLOBAL.primaryContainer);
-    }, false);
-
-
-
-
+/**
+ * @type {number}
+ */
+ma.GLOBAL_serverRequestId = 0;
 

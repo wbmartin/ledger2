@@ -26,7 +26,7 @@ if(ref($sth))  {#if we have a successful connection and statement built, execute
   print STDERR "Connection Successful\n" if($debug);
   $sth->execute();
   if(!$sth->err){
-    $rowCount=0;# iterate through resultset
+    $rowCount = 0;# iterate through resultset
     while(my $ref = $sth->fetchrow_hashref()) {
       push(@rows, $ref);
       $rowCount++;
@@ -34,11 +34,11 @@ if(ref($sth))  {#if we have a successful connection and statement built, execute
       #while ( my ($key, $value) = each(%$ref) ) {print STDERR "$key: $value"; }
     }
     #package it up in and print it
-    $json->{"rows"} =\@rows;
-  $json->{"rowCount"}=$rowCount;
+    $json->{"rows"} = \@rows;
+  $json->{"rowCount"} = $rowCount;
 }else{
-  $json->{"rowCount"}=0;
-  $json->{"errorMsg"} =$DBI::errstr;
+  $json->{"rowCount"} = 0;
+  $json->{"errorMsg"} = $DBI::errstr;
 }
 if (uc($params->{'spwfAction'}) eq "DELETE"){
   while ( my ($key, $value) = each(%$params) ) {
