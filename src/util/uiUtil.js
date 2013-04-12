@@ -20,6 +20,8 @@
 
 goog.provide('ma.uiUtil');
 
+goog.require('goog.dom.classes');
+
 /**
  * @param {string} resource the resource name.
  * @param {string} action the action name.
@@ -29,31 +31,86 @@ ma.uiUtil.resourceAction = function(resource, action) {
   return '&spwfResource=' + resource + '&spwfAction=' + action;
 };
 
+
 /**
- * @param {Element} lbl the label.
- * @param {Element} inpt the input.
- * @return {Element} the table row.
+ * @param {string} lblText the label.
+ * @param {string} inptName the input.
+ * @param {string=} opt_inputType the type of input.
+ * @constructor
  */
-ma.uiUtil.buildJustifiedFormRow = function(lbl, inpt) {
-  var td1 = goog.dom.createDom('td', null, lbl);
-  var td2 = goog.dom.createDom('td', null, inpt);
- return goog.dom.createDom('tr', null, td1, td2);
+
+ma.uiUtil.formInput = function(lblText, inptName, opt_inputType) {
+  this.label = goog.dom.createDom('label', null, lblText);
+  this.inputType = opt_inputType || 'text';
+  if (this.inputType !== 'select') {
+    this.input = goog.dom.createDom('input',
+        {'name': inptName, 'type': this.inputType });
+  }else {
+    this.input = goog.dom.createDom('select', {'name': inptName});
+  }
+  goog.dom.classes.add(this.label, 'control-label');
+  goog.dom.classes.add(this.input, 'input-xlarge');
+  this.helpBlock = goog.dom.createDom('p', {'class': 'help-block'});
+};
+
+/**
+ *
+ * @return {Element} the form input.
+ */
+ma.uiUtil.formInput.prototype.make = function() {
+  this.controlsDiv = goog.dom.createDom('div', {'class': 'controls'},
+      this.input, this.helpBlock);
+  this.controlGroupDiv = goog.dom.createDom('div',
+      {'class': 'control-group'}, this.label, this.controlsDiv);
+  return this.controlGroupDiv;
+};
+
+/**
+ * @param {string=} opt_resource the default resource for the form.
+ * @param {string=} opt_action the default action for the form.
+ * @constructor
+ */
+ma.uiUtil.form = function(opt_resource, opt_action) {
+  this.inputs = new Array();
+  this.resource = opt_resource;
+  this.action = opt_action;
+
+};
+
+/**
+ * @param {ma.uiUtil.formInput} inpt the input holder.
+ */
+ma.uiUtil.form.prototype.addInput = function(inpt) {
+  this.inputs.push(inpt);
+};
+
+/**
+ *
+ * @return {string} the forms query data string.
+ */
+ma.uiUtil.form.prototype.getFormDataString = function() {
+  var qdstr = '&spwfResource=' + this.resource + '&spwfAction=' + this.action;
+  return goog.dom.forms.getFormDataString(this.form) + qdstr;
 };
 
 
 /**
  *
- * @param {Array} formRows the array of form rows built by above function.
- * @return {Element} a form element.
+ * @param {string=} opt_class the form class.
+ * @return {Element} the created Form.
  */
-ma.uiUtil.buildJustifiedForm = function(formRows) {
-  var t = goog.dom.createDom('table', null);
-  var rowCount = formRows.length;
+ma.uiUtil.form.prototype.make = function(opt_class) {
+  this.renderClass = opt_class || 'form-horizontal';
+  var fs = goog.dom.createDom('fieldset', null);
+  var rowCount = this.inputs.length;
   for (var i = 0; i < rowCount; i++) {
-    goog.dom.appendChild(t, formRows[i]);
+    goog.dom.appendChild(fs, this.inputs[i].make());
   }
-  var f = goog.dom.createDom('form', null, t);
-  return f;
+  this.form = goog.dom.createDom('form', {'class': this.renderClass}, fs);
+  return this.form;
+
 };
+
+
 
 

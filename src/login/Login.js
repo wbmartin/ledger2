@@ -19,7 +19,6 @@
 goog.provide('ma.Login');
 
 goog.require('goog.dom');
-goog.require('goog.dom.classes');
 goog.require('goog.dom.forms');
 goog.require('goog.events.EventHandler');
 goog.require('goog.events.EventType');
@@ -82,19 +81,18 @@ ma.Login.prototype.decorateInternal = function(element) {
   soy.renderElement(element, ma.LoginWebView.top);
   var rows = new Array();
 
-  this.lblUserId = goog.dom.createDom('label', null, 'Username');
-  this.txtUserId = goog.dom.createDom('input',
-      {'name': 'user_id', 'type': 'text'});
-  rows[0] = ma.uiUtil.buildJustifiedFormRow(this.lblUserId, this.txtUserId);
+  this.userid = new ma.uiUtil.formInput('Username', 'user_id');
+  this.password = new ma.uiUtil.formInput('Password',
+      'password', 'password');
+  this.selectTest = new ma.uiUtil.formInput('TEST', 'test', 'select');
+  this.f1 = new ma.uiUtil.form('SECURITY_USER', 'AUTHENTICATE');
+  this.f1.addInput(this.userid);
+  this.f1.addInput(this.password);
+  this.f1.addInput(this.selectTest);
 
-  this.lblPassword = goog.dom.createDom('label', null, 'Password');
-  this.txtPassword = goog.dom.createDom('input',
-      {'name': 'password', 'type': 'password'});
-  rows[1] = ma.uiUtil.buildJustifiedFormRow(this.lblPassword, this.txtPassword);
+  goog.dom.appendChild(element, this.f1.make('form-horizontal'));
 
-  this.f1 = ma.uiUtil.buildJustifiedForm(rows);
-  goog.dom.appendChild(element, this.f1);
-
+  this.userid.helpBlock.innerHTML = 'foo';
   this.loginButton = goog.dom.createDom('button', null, 'Login');
   goog.dom.appendChild(element, this.loginButton);
 
@@ -144,8 +142,9 @@ ma.Login.prototype.exitDocument = function() {
  *
  */
 ma.Login.prototype.submitLoginCreds = function() {
-  var qdstr = goog.dom.forms.getFormDataString(this.f1);
-  qdstr += ma.uiUtil.resourceAction('SECURITY_USER', 'AUTHENTICATE');
+  //var qdstr = goog.dom.forms.getFormDataString(this.f1);
+  //qdstr += ma.uiUtil.resourceAction();
+  var qdstr = this.f1.getFormDataString();
   goog.net.XhrIo.send(ma.CONST_PRIMARY_SERVER_URL,
         this.handleLoginResponse, 'POST', qdstr);
 };
