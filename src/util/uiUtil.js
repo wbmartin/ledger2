@@ -78,10 +78,13 @@ ma.uiUtil.form = function(opt_resource, opt_action) {
 };
 
 /**
- * @param {ma.uiUtil.formInput} inpt the input holder.
+ * @param {...(Object|string|Array|NodeList)} var_args inputs to add.
  */
-ma.uiUtil.form.prototype.addInput = function(inpt) {
-  this.inputs.push(inpt);
+ma.uiUtil.form.prototype.addInput = function(var_args) {
+  var inputCount = arguments.length;
+  for (var ndx = 0; ndx < inputCount; ndx++) {
+    this.inputs.push(arguments[ndx]);
+  }
 };
 
 /**

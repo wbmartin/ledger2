@@ -78,23 +78,20 @@ ma.Login.prototype.createDom = function() {
  */
 ma.Login.prototype.decorateInternal = function(element) {
   ma.Login.superClass_.decorateInternal.call(this, element);
-  soy.renderElement(element, ma.LoginWebView.top);
-  var rows = new Array();
-
+  this.container = goog.dom.createDom('div','span4 offset4');
+  soy.renderElement(this.container, ma.LoginWebView.top);
   this.userid = new ma.uiUtil.formInput('Username', 'user_id');
   this.password = new ma.uiUtil.formInput('Password',
       'password', 'password');
-  this.selectTest = new ma.uiUtil.formInput('TEST', 'test', 'select');
   this.f1 = new ma.uiUtil.form('SECURITY_USER', 'AUTHENTICATE');
-  this.f1.addInput(this.userid);
-  this.f1.addInput(this.password);
-  this.f1.addInput(this.selectTest);
+  this.f1.addInput(this.userid, this.password);
+  this.userid.input.value = 'ledger';
+  this.password.input.value = 'ledger';
+  goog.dom.appendChild(this.container, this.f1.make('form-horizontal'));
 
-  goog.dom.appendChild(element, this.f1.make('form-horizontal'));
-
-  this.userid.helpBlock.innerHTML = 'foo';
   this.loginButton = goog.dom.createDom('button', null, 'Login');
-  goog.dom.appendChild(element, this.loginButton);
+  goog.dom.appendChild(this.container, this.loginButton);
+  goog.dom.appendChild(element, this.container);
 
   this.eh_.listen(this.loginButton,
       goog.events.EventType.CLICK, this.submitLoginCreds);
@@ -142,11 +139,8 @@ ma.Login.prototype.exitDocument = function() {
  *
  */
 ma.Login.prototype.submitLoginCreds = function() {
-  //var qdstr = goog.dom.forms.getFormDataString(this.f1);
-  //qdstr += ma.uiUtil.resourceAction();
-  var qdstr = this.f1.getFormDataString();
   goog.net.XhrIo.send(ma.CONST_PRIMARY_SERVER_URL,
-        this.handleLoginResponse, 'POST', qdstr);
+        this.handleLoginResponse, 'POST', this.f1.getFormDataString());
 };
 
 
