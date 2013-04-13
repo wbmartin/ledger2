@@ -29,7 +29,8 @@ goog.require('goog.net.XhrIo');
 goog.require('goog.ui.Component');
 goog.require('ma.LoginWebView');
 goog.require('ma.pages');
-goog.require('ma.uiUtil');
+goog.require('ma.uiUtilForm');
+goog.require('ma.uiUtilFormInput');
 
 
 /**
@@ -78,16 +79,16 @@ ma.Login.prototype.createDom = function() {
  */
 ma.Login.prototype.decorateInternal = function(element) {
   ma.Login.superClass_.decorateInternal.call(this, element);
-  this.container = goog.dom.createDom('div','span4 offset4');
+  this.container = goog.dom.createDom('div', 'span4 offset4');
   soy.renderElement(this.container, ma.LoginWebView.top);
-  this.userid = new ma.uiUtil.formInput('Username', 'user_id');
-  this.password = new ma.uiUtil.formInput('Password',
+  this.userid = new ma.uiUtilFormInput('Username', 'user_id');
+  this.password = new ma.uiUtilFormInput('Password',
       'password', 'password');
-  this.f1 = new ma.uiUtil.form('SECURITY_USER', 'AUTHENTICATE');
+  this.f1 = new ma.uiUtilForm('SECURITY_USER', 'AUTHENTICATE');
   this.f1.addInput(this.userid, this.password);
+    goog.dom.appendChild(this.container, this.f1.createDom('form-horizontal'));
   this.userid.input.value = 'ledger';
   this.password.input.value = 'ledger';
-  goog.dom.appendChild(this.container, this.f1.make('form-horizontal'));
 
   this.loginButton = goog.dom.createDom('button', null, 'Login');
   goog.dom.appendChild(this.container, this.loginButton);
@@ -107,9 +108,7 @@ ma.Login.prototype.decorateInternal = function(element) {
 ma.Login.prototype.disposeInternal = function() {
   ma.Login.superClass_.disposeInternal.call(this);
   this.eh_.dispose();
-  if (this.kh_) {
-    this.kh_.dispose();
-  }
+  if (this.kh_) { this.kh_.dispose(); }
 };
 
 
