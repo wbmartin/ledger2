@@ -35,8 +35,16 @@ ma.uiUtilForm = function(opt_resource, opt_action, opt_domHelper) {
   this.inputs = new Array();
   this.resource = opt_resource;
   this.action = opt_action;
+  /**
+   * Event handler for this object.
+   * @type {goog.events.EventHandler}
+   * @private
+   */
+  this.eh_ = new goog.events.EventHandler(this);
+
 
 };
+goog.inherits(ma.uiUtilForm, goog.ui.Component);
 
 /**
  * Creates an initial DOM representation for the component.
@@ -66,7 +74,7 @@ ma.uiUtilForm.prototype.addInput = function(var_args) {
  */
 ma.uiUtilForm.prototype.getFormDataString = function() {
   var qdstr = '&spwfResource=' + this.resource + '&spwfAction=' + this.action;
-  return goog.dom.forms.getFormDataString(this.form) + qdstr;
+  return goog.dom.forms.getFormDataString(this.element_) + qdstr;
 };
 
 
@@ -76,23 +84,27 @@ ma.uiUtilForm.prototype.getFormDataString = function() {
  * @return {Element} the created Form.
  */
 ma.uiUtilForm.prototype.decorateInternal = function(element) {
-  this.form = element;
+  this.setElementInternal(element);
   var fs = goog.dom.createDom('fieldset', null);
   var rowCount = this.inputs.length;
   for (var i = 0; i < rowCount; i++) {
     goog.dom.appendChild(fs, this.inputs[i].createDom());
+  this.addChild(this.inputs[i]);
   }
-  goog.dom.appendChild(this.form, fs);
-  return this.form;
+  goog.dom.appendChild(this.element_, fs);
+  return this.element_;
 
 };
 
 
 /** @override */
-ma.uiUtilForm.prototype.disposeInternal = function() {
-  ma.uiUtilFormInput.superClass_.disposeInternal.call(this);
+ma.uiUtilForm.prototype.dispose = function() {
   this.eh_.dispose();
-  //if (this.kh_) { this.kh_.dispose(); }
+  if (!this.getDisposed()) {
+    if (this.kh_) { this.kh_.dispose(); }
+    this.eh_.dispose();
+    goog.base(this, 'dispose');
+  }
 };
 
 /**
@@ -109,5 +121,11 @@ ma.uiUtilForm.prototype.enterDocument = function() {
  * Called when component's element is known to have been removed from the
  * document.
  */
+ma.uiUtilForm.prototype.exitDocument = function() {
+
+ // this.eh_.unlisten(this.getElement(), goog.events.EventType.CLICK,
+ //     this.onDivClicked_);
+goog.base(this, 'exitDocument');
+};
 
 

@@ -67,7 +67,7 @@ goog.inherits(ma.Login, goog.ui.Component);
  * Creates an initial DOM representation for the component.
  */
 ma.Login.prototype.createDom = function() {
-  this.decorateInternal(this.dom_.createElement('div'));
+  return this.decorateInternal(this.dom_.createElement('div'));
 };
 
 
@@ -78,7 +78,9 @@ ma.Login.prototype.createDom = function() {
  *    text, if any will be used as the component's label.
  */
 ma.Login.prototype.decorateInternal = function(element) {
-  ma.Login.superClass_.decorateInternal.call(this, element);
+  //ma.Login.superClass_.decorateInternal.call(this, element);
+  this.setElementInternal(element);
+
   this.container = goog.dom.createDom('div', 'span4 offset4');
   soy.renderElement(this.container, ma.LoginWebView.top);
   this.userid = new ma.uiUtilFormInput('Username', 'user_id');
@@ -92,11 +94,12 @@ ma.Login.prototype.decorateInternal = function(element) {
 
   this.loginButton = goog.dom.createDom('button', null, 'Login');
   goog.dom.appendChild(this.container, this.loginButton);
-  goog.dom.appendChild(element, this.container);
+  goog.dom.appendChild(this.element_, this.container);
+  this.addChild(this.f1);
 
   this.eh_.listen(this.loginButton,
       goog.events.EventType.CLICK, this.submitLoginCreds);
-
+  return this.element_;
   //this.kh_ = new goog.events.KeyHandler(element);
   //this.eh_.listen(this.kh_,
       //goog.events.KeyHandler.EventType.KEY, this.onKey_);
@@ -127,9 +130,10 @@ ma.Login.prototype.enterDocument = function() {
  * document.
  */
 ma.Login.prototype.exitDocument = function() {
-  ma.Login.superClass_.exitDocument.call(this);
+
  // this.eh_.unlisten(this.getElement(), goog.events.EventType.CLICK,
  //     this.onDivClicked_);
+goog.base(this, 'exitDocument');
 };
 
 

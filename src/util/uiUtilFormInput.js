@@ -90,11 +90,13 @@ ma.uiUtilFormInput.prototype.createDom = function() {
  * @return {Element} the decorated div.
  */
 ma.uiUtilFormInput.prototype.decorateInternal = function(element) {
-  ma.uiUtilFormInput.superClass_.decorateInternal.call(this, element);
+  //ma.uiUtilFormInput.superClass_.decorateInternal.call(this, element);
+  this.setElementInternal(element);
+
   //  this.kh_ = new goog.events.KeyHandler(element);
   //this.eh_.listen(this.kh_, goog.events.KeyHandler.EventType.KEY,
   //this.onKey_);
-  this.controlGroupDiv = element;
+  //this.controlGroupDiv = element;
   this.label = goog.dom.createDom('label', null, this.lblText);
   if (this.inputType !== 'select') {
     this.input = goog.dom.createDom('input',
@@ -111,16 +113,15 @@ ma.uiUtilFormInput.prototype.decorateInternal = function(element) {
   this.controlsDiv = goog.dom.createDom('div', {'class': 'controls'},
       this.input, this.helpBlock);
 
-  goog.dom.appendChild(this.controlGroupDiv, this.label);
-  goog.dom.appendChild(this.controlGroupDiv, this.controlsDiv);
-  return this.controlGroupDiv;
+  goog.dom.appendChild(this.element_, this.label);
+  goog.dom.appendChild(this.element_, this.controlsDiv);
+  return this.element_;
 };
 
 /** @override */
-ma.uiUtilFormInput.prototype.disposeInternal = function() {
-  ma.uiUtilFormInput.superClass_.disposeInternal.call(this);
-  this.eh_.dispose();
+ma.uiUtilFormInput.prototype.dispose = function() {
   //if (this.kh_) { this.kh_.dispose(); }
+  goog.base(this, 'dispose');
 };
 
 /**
@@ -138,9 +139,9 @@ ma.uiUtilFormInput.prototype.enterDocument = function() {
  * document.
  */
 ma.uiUtilFormInput.prototype.exitDocument = function() {
-  ma.uiUtilFormInput.superClass_.exitDocument.call(this);
   //this.eh_.unlisten(this.getElement(), goog.events.EventType.CLICK,
   //    this.onDivClicked_);
+  goog.base(this, 'exitDocument');
 };
 
 
