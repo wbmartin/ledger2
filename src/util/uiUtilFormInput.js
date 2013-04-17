@@ -18,9 +18,10 @@
  */
 
 
-goog.provide('ma.uiUtil');
 
+goog.require('goog.debug.Logger');
 goog.require('goog.dom.classes');
+goog.require('ma.uiUtil');
 
 /**
  * @param {string} resource the resource name.
@@ -65,6 +66,14 @@ ma.uiUtilFormInput = function(lblText, inptName, opt_inputType,
    * @private
    */
   //this.kh_ = null;
+ /**
+   * A reference to the class logger
+   * @type {goog.debug.Logger}
+   * @private
+   */
+  this.logger_ = goog.debug.Logger.getLogger('ma.uiUtilFormInput');
+  this.logger_.setLevel(ma.CONST_DEFAULT_LOG_LEVEL);
+  this.logger_.finest('Constructor Called');
 
 };
 goog.inherits(ma.uiUtilFormInput, goog.ui.Component);
@@ -74,12 +83,10 @@ goog.inherits(ma.uiUtilFormInput, goog.ui.Component);
 
 /**
  * Creates an initial DOM representation for the component.
- * @return {!Element} Reference to a DOM node.
  */
 ma.uiUtilFormInput.prototype.createDom = function() {
-  //goog.dom.createDom('div', {'class': 'control-group'})
-
-  return this.decorateInternal(this.dom_.createElement('div', 'control-group'));
+  this.logger_.finest('createDom Called');
+  this.decorateInternal(this.dom_.createDom('div', 'control-group'));
 };
 
 /**
@@ -87,10 +94,9 @@ ma.uiUtilFormInput.prototype.createDom = function() {
  *
  * @param {Element} element The DIV element to decorate. The element's
  *    text, if any will be used as the component's label.
- * @return {Element} the decorated div.
  */
 ma.uiUtilFormInput.prototype.decorateInternal = function(element) {
-  //ma.uiUtilFormInput.superClass_.decorateInternal.call(this, element);
+  this.logger_.finest('decorateInternal Called');
   this.setElementInternal(element);
 
   //  this.kh_ = new goog.events.KeyHandler(element);
@@ -115,11 +121,11 @@ ma.uiUtilFormInput.prototype.decorateInternal = function(element) {
 
   goog.dom.appendChild(this.element_, this.label);
   goog.dom.appendChild(this.element_, this.controlsDiv);
-  return this.element_;
 };
 
 /** @override */
 ma.uiUtilFormInput.prototype.dispose = function() {
+  this.logger_.finest('dispose Called');
   //if (this.kh_) { this.kh_.dispose(); }
   goog.base(this, 'dispose');
 };
@@ -128,9 +134,8 @@ ma.uiUtilFormInput.prototype.dispose = function() {
  * Called when component's element is known to be in the document.
  */
 ma.uiUtilFormInput.prototype.enterDocument = function() {
-  ma.uiUtilFormInput.superClass_.enterDocument.call(this);
-  this.eh_.listen(this.getElement(), goog.events.EventType.CLICK,
-      this.onDivClicked_);
+  this.logger_.finest('enterDocument Called');
+  goog.base(this, 'enterDocument');
 };
 
 
@@ -139,6 +144,7 @@ ma.uiUtilFormInput.prototype.enterDocument = function() {
  * document.
  */
 ma.uiUtilFormInput.prototype.exitDocument = function() {
+  this.logger_.finest('exitDocument Called');
   //this.eh_.unlisten(this.getElement(), goog.events.EventType.CLICK,
   //    this.onDivClicked_);
   goog.base(this, 'exitDocument');

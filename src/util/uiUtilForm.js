@@ -20,7 +20,9 @@
 
 goog.provide('ma.uiUtilForm');
 
+goog.require('goog.debug.Logger');
 goog.require('goog.dom.classes');
+goog.require('ma.uiUtil');
 
 /**
  * @param {string=} opt_resource the default resource for the form.
@@ -41,22 +43,83 @@ ma.uiUtilForm = function(opt_resource, opt_action, opt_domHelper) {
    * @private
    */
   this.eh_ = new goog.events.EventHandler(this);
-
+  /**
+   * A reference to the class logger
+   * @type {goog.debug.Logger}
+   * @private
+   */
+  this.logger_ = goog.debug.Logger.getLogger('ma.uiUtilForm');
+  this.logger_.setLevel(ma.CONST_DEFAULT_LOG_LEVEL);
+  this.logger_.finest('Constructor Called');
+  this.formStyle_ = 'form-horizontal';
 
 };
 goog.inherits(ma.uiUtilForm, goog.ui.Component);
 
 /**
  * Creates an initial DOM representation for the component.
- * @param {string=} opt_class the form class.
- * @return {!Element} Reference to a DOM node.
+ * @param {string} style the form style.
  */
-ma.uiUtilForm.prototype.createDom = function(opt_class) {
-  //goog.dom.createDom('div', {'class': 'control-group'})
-  opt_class = opt_class || 'form-horizontal';
-  return this.decorateInternal(goog.dom.createDom('form', opt_class));
+ma.uiUtilForm.prototype.setFormStyle = function(style) {
+this.formStyle_ = style;
 };
 
+/**
+ * Creates an initial DOM representation for the component.
+ */
+ma.uiUtilForm.prototype.createDom = function() {
+  this.logger_.finest('createDom Called');
+  this.decorateInternal(this.dom_.createDom('form', this.formStyle_));
+};
+
+
+
+
+/**
+ *
+ * @param {Element} element the form to decorate.
+ */
+ma.uiUtilForm.prototype.decorateInternal = function(element) {
+  this.logger_.finest('decorateInternal Called');
+  this.setElementInternal(element);
+  var fs = goog.dom.createDom('fieldset', null);
+  var rowCount = this.inputs.length;
+  for (var i = 0; i < rowCount; i++) {
+    ma.uiUtil.stageRender(this, this.inputs[i],fs)
+  }
+  goog.dom.appendChild(this.element_, fs);
+
+};
+
+
+/** @override */
+ma.uiUtilForm.prototype.dispose = function() {
+  this.logger_.finest('dispose Called');
+  this.eh_.dispose();
+  if (!this.isDisposed()) {
+    if (this.kh_) { this.kh_.dispose(); }
+    this.eh_.dispose();
+    goog.base(this, 'dispose');
+  }
+};
+
+/**
+ * Called when component's element is known to be in the document.
+ */
+ma.uiUtilForm.prototype.enterDocument = function() {
+  this.logger_.finest('enterDocument Called');
+  goog.base(this, 'enterDocument');
+};
+
+
+/**
+ * Called when component's element is known to have been removed from the
+ * document.
+ */
+ma.uiUtilForm.prototype.exitDocument = function() {
+  this.logger_.finest('exitDocument Called');
+  goog.base(this, 'exitDocument');
+};
 
 /**
  * @param {...(Object|string|Array|NodeList)} var_args inputs to add.
@@ -74,58 +137,8 @@ ma.uiUtilForm.prototype.addInput = function(var_args) {
  */
 ma.uiUtilForm.prototype.getFormDataString = function() {
   var qdstr = '&spwfResource=' + this.resource + '&spwfAction=' + this.action;
-  return goog.dom.forms.getFormDataString(this.element_) + qdstr;
-};
-
-
-/**
- *
- * @param {Element} element the form to decorate.
- * @return {Element} the created Form.
- */
-ma.uiUtilForm.prototype.decorateInternal = function(element) {
-  this.setElementInternal(element);
-  var fs = goog.dom.createDom('fieldset', null);
-  var rowCount = this.inputs.length;
-  for (var i = 0; i < rowCount; i++) {
-    goog.dom.appendChild(fs, this.inputs[i].createDom());
-  this.addChild(this.inputs[i]);
-  }
-  goog.dom.appendChild(this.element_, fs);
-  return this.element_;
-
-};
-
-
-/** @override */
-ma.uiUtilForm.prototype.dispose = function() {
-  this.eh_.dispose();
-  if (!this.getDisposed()) {
-    if (this.kh_) { this.kh_.dispose(); }
-    this.eh_.dispose();
-    goog.base(this, 'dispose');
-  }
-};
-
-/**
- * Called when component's element is known to be in the document.
- */
-ma.uiUtilForm.prototype.enterDocument = function() {
-  ma.uiUtilFormInput.superClass_.enterDocument.call(this);
-  this.eh_.listen(this.getElement(), goog.events.EventType.CLICK,
-      this.onDivClicked_);
-};
-
-
-/**
- * Called when component's element is known to have been removed from the
- * document.
- */
-ma.uiUtilForm.prototype.exitDocument = function() {
-
- // this.eh_.unlisten(this.getElement(), goog.events.EventType.CLICK,
- //     this.onDivClicked_);
-goog.base(this, 'exitDocument');
+  return goog.dom.forms.getFormDataString(
+      /** @type {HTMLFormElement}*/ (this.element_)) + qdstr;
 };
 
 

@@ -26,7 +26,8 @@
 </form>
 <div id="EmptyDivId" class="LogicalHide"><!--dispatchercommon.html --> &nbsp; </div>
 <div id="mainContent"></div>
-<div id="LoggerConsoleDivId" class="LogicalHide">
+<div id="LoggerConsoleDivId" style="position: relative;
+  margin-top: -150px; height: 150px; clear:both; padding-top:20px;overflow:auto;">
   <fieldset class="goog-debug-panel">
     <legend>Event Log</legend>
     <div id="loggerConsole"></div>

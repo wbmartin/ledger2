@@ -18,6 +18,7 @@
  */
 goog.provide('ma.Login');
 
+goog.require('goog.debug.Logger');
 goog.require('goog.dom');
 goog.require('goog.dom.forms');
 goog.require('goog.events.EventHandler');
@@ -29,6 +30,7 @@ goog.require('goog.net.XhrIo');
 goog.require('goog.ui.Component');
 goog.require('ma.LoginWebView');
 goog.require('ma.pages');
+goog.require('ma.uiUtil');
 goog.require('ma.uiUtilForm');
 goog.require('ma.uiUtilFormInput');
 
@@ -58,6 +60,14 @@ ma.Login = function(opt_domHelper) {
    * @private
    */
   this.kh_ = null;
+  /**
+   * A reference to the class logger
+   * @type {goog.debug.Logger}
+   * @private
+   */
+  this.logger_ = goog.debug.Logger.getLogger('ma.Login');
+  this.logger_.setLevel(ma.CONST_DEFAULT_LOG_LEVEL);
+  this.logger_.finest('Constructor Called');
 };
 goog.inherits(ma.Login, goog.ui.Component);
 
@@ -67,7 +77,8 @@ goog.inherits(ma.Login, goog.ui.Component);
  * Creates an initial DOM representation for the component.
  */
 ma.Login.prototype.createDom = function() {
-  return this.decorateInternal(this.dom_.createElement('div'));
+  this.logger_.finest('createDom Called');
+  this.decorateInternal(this.dom_.createElement('div'));
 };
 
 
@@ -78,7 +89,7 @@ ma.Login.prototype.createDom = function() {
  *    text, if any will be used as the component's label.
  */
 ma.Login.prototype.decorateInternal = function(element) {
-  //ma.Login.superClass_.decorateInternal.call(this, element);
+  this.logger_.finest('decorateInternal Called');
   this.setElementInternal(element);
 
   this.container = goog.dom.createDom('div', 'span4 offset4');
@@ -88,18 +99,17 @@ ma.Login.prototype.decorateInternal = function(element) {
       'password', 'password');
   this.f1 = new ma.uiUtilForm('SECURITY_USER', 'AUTHENTICATE');
   this.f1.addInput(this.userid, this.password);
-    goog.dom.appendChild(this.container, this.f1.createDom('form-horizontal'));
+  this.f1.setFormStyle('form-horizontal');
+  ma.uiUtil.stageRender(this, this.f1,this.container);
   this.userid.input.value = 'ledger';
   this.password.input.value = 'ledger';
 
   this.loginButton = goog.dom.createDom('button', null, 'Login');
   goog.dom.appendChild(this.container, this.loginButton);
   goog.dom.appendChild(this.element_, this.container);
-  this.addChild(this.f1);
 
   this.eh_.listen(this.loginButton,
       goog.events.EventType.CLICK, this.submitLoginCreds);
-  return this.element_;
   //this.kh_ = new goog.events.KeyHandler(element);
   //this.eh_.listen(this.kh_,
       //goog.events.KeyHandler.EventType.KEY, this.onKey_);
@@ -108,8 +118,9 @@ ma.Login.prototype.decorateInternal = function(element) {
 
 
 /** @override */
-ma.Login.prototype.disposeInternal = function() {
-  ma.Login.superClass_.disposeInternal.call(this);
+ma.Login.prototype.dispose = function() {
+  this.logger_.finest('dispose Called');
+  goog.base(this, 'dispose');
   this.eh_.dispose();
   if (this.kh_) { this.kh_.dispose(); }
 };
@@ -119,9 +130,8 @@ ma.Login.prototype.disposeInternal = function() {
  * Called when component's element is known to be in the document.
  */
 ma.Login.prototype.enterDocument = function() {
-  ma.Login.superClass_.enterDocument.call(this);
-  //this.eh_.listen(this.getElement(), goog.events.EventType.CLICK,
-  //    this.onDivClicked_);
+  this.logger_.finest('enterDocument Called');
+  goog.base(this, 'enterDocument');
 };
 
 
@@ -130,10 +140,8 @@ ma.Login.prototype.enterDocument = function() {
  * document.
  */
 ma.Login.prototype.exitDocument = function() {
-
- // this.eh_.unlisten(this.getElement(), goog.events.EventType.CLICK,
- //     this.onDivClicked_);
-goog.base(this, 'exitDocument');
+  this.logger_.finest('exitDocument Called');
+  goog.base(this, 'exitDocument');
 };
 
 
