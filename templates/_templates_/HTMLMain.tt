@@ -25,15 +25,15 @@
 	<input type="text" name="historyTrackerId" id = "historyTrackerId" style="display:none;" >
 </form>
 <div id="EmptyDivId" class="LogicalHide"><!--dispatchercommon.html --> &nbsp; </div>
-<div id="mainContent"></div>
-<div id="LoggerConsoleDivId" style="position: relative;
-  margin-top: -150px; height: 150px; clear:both; padding-top:20px;overflow:auto;">
+<div id="LoggerConsoleDivId" style="position: relative; height: 100px; clear:both; overflow:auto;">
   <fieldset class="goog-debug-panel">
     <legend>Event Log</legend>
     <div id="loggerConsole"></div>
   </fieldset>
 </div>
+<div id="mainContent"></div>
 
+ 
 <script src="http://localhost:9810/compile?id=app-debug&mode=RAW"></script>
 <script>app.start()</script>
 </body>

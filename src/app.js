@@ -5,6 +5,7 @@ goog.require('goog.debug.Logger');
 goog.require('goog.dom');
 goog.require('ma.CONST');
 goog.require('ma.Login');
+goog.require('ma.MainLauncher');
 goog.require('ma.pages');
 
 /**

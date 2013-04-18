@@ -31,3 +31,15 @@ ma.uiUtil.stageRender = function(pComponent, cComponent, opt_pElement ){
   goog.dom.appendChild(opt_pElement, cComponent.getElement());
   pComponent.addChild(cComponent); 
 };
+
+/**
+ *
+ * @param {goog.ui.component} newpage the new page.
+ */
+ma.uiUtil.changePage = function(newpage){
+  if (ma.pages.currentPage !== undefined){
+    ma.pages.currentPage.dispose();
+  }
+  newpage.render(ma.GLOBAL_primaryContainer);
+  ma.pages.currentPage = newpage;
+}
