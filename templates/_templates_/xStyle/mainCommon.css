@@ -14,7 +14,7 @@ display:none !important;
 
 }
 
-.largeIconSpan{
+.largeIcon{
   display:inline-block; 
   border-style:none;
   text-align:center;
@@ -26,7 +26,7 @@ display:none !important;
   display:inline-block;
   height:64px;
   width:64px;
-  background:url(images/consolidatedIcons.png) no-repeat;
+  background:url(img/consolidatedIcons.png) no-repeat;
   padding: 0 0 0 0;
 }
 
@@ -34,14 +34,14 @@ display:none !important;
   display:inline-block;
   height:32px;
   width:32px;
-  background:url(images/consolidatedIcons.png) no-repeat;
+  background:url(img/consolidatedIcons.png) no-repeat;
   padding: 0 0 0 0;
 }
 .sprite16Icon{
   display:inline-block;
   height:16px;
   width:16px;
-  background:url(images/consolidatedIcons.png) no-repeat;
+  background:url(img/consolidatedIcons.png) no-repeat;
   padding: 0 0 0 0;
 }
 

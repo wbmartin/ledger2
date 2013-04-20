@@ -18,6 +18,7 @@
  */
 goog.provide('ma.Login');
 
+goog.require('goog.Uri');
 goog.require('goog.debug.Logger');
 goog.require('goog.dom');
 goog.require('goog.dom.forms');
@@ -100,7 +101,7 @@ ma.Login.prototype.decorateInternal = function(element) {
   this.f1 = new ma.uiUtilForm('SECURITY_USER', 'AUTHENTICATE');
   this.f1.addInput(this.userid, this.password);
   this.f1.setFormStyle('form-horizontal');
-  ma.uiUtil.stageRender(this, this.f1,this.container);
+  ma.uiUtil.stageRender(this, this.f1, this.container);
   this.userid.input.value = 'ledger';
   this.password.input.value = 'ledger';
 
@@ -164,14 +165,19 @@ ma.Login.prototype.handleLoginResponse = function(e) {
   /** @type {Object} */
     var obj = e.target.getResponseJson();
     var session = obj['rows'][0]['session_id'];
+    var userId = obj['rows'][0]['user_id'];
     if (session !== '') {
-      ma.pages.dispatchEvent(new ma.plEvent('MAINLAUNCHER_PAGE', '2'));
+      var sessionExpirationSeconds = 60 * 20;
+      goog.net.cookies.set('session_id', session, sessionExpirationSeconds);
+      goog.net.cookies.set('user_id', userId, sessionExpirationSeconds);
+
+      app.hist.setToken('MainLauncher');
     } else {
       alert('failed');
     }
 };
 
-ma.pages.addEventListener('LOGIN_PAGE',
+ma.pages.addEventListener('LOGIN',
     function(e) {
       //alert(e.payload);
       //app.logger_.finest('showLoginWeb called');

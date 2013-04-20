@@ -85,7 +85,7 @@ ma.uiUtilForm.prototype.decorateInternal = function(element) {
   var fs = goog.dom.createDom('fieldset', null);
   var rowCount = this.inputs.length;
   for (var i = 0; i < rowCount; i++) {
-    ma.uiUtil.stageRender(this, this.inputs[i],fs)
+    ma.uiUtil.stageRender(this, this.inputs[i], fs);
   }
   goog.dom.appendChild(this.element_, fs);
 
