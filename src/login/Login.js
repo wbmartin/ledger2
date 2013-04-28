@@ -184,8 +184,6 @@ ma.pages.addEventListener('LOGIN',
       if (app.loginWeb === undefined) {
         app.loginWeb = new ma.Login();
       }
-      //ma.pages.currentPage = app.loginWeb;
-      //app.loginWeb.render(ma.GLOBAL_primaryContainer);
       ma.uiUtil.changePage(app.loginWeb);
     }, false);
 

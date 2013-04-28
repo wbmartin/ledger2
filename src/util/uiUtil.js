@@ -22,7 +22,8 @@ goog.provide('ma.uiUtil');
 goog.require('ma.CONST');
 goog.require('goog.debug.Logger');
 
-goog.debug.Logger.getLogger('ma.Login').setLevel(ma.CONST_DEFAULT_LOG_LEVEL);
+ma.uiUtil.logger_ = goog.debug.Logger.getLogger('ma.uiUtil');
+ma.uiUtil.logger_.setLevel(ma.CONST_DEFAULT_LOG_LEVEL);
 /**
  *
  * @param {goog.ui.Component} pComponent the child.
@@ -30,6 +31,7 @@ goog.debug.Logger.getLogger('ma.Login').setLevel(ma.CONST_DEFAULT_LOG_LEVEL);
  * @param {Element} opt_pElement the element to add.
  */
 ma.uiUtil.stageRender = function(pComponent, cComponent, opt_pElement) {
+ ma.uiUtil.logger_.finest('StageRender called:');
   cComponent.createDom();
   opt_pElement = opt_pElement || pComponent.getElement();
   goog.dom.appendChild(opt_pElement, cComponent.getElement());
@@ -41,8 +43,10 @@ ma.uiUtil.stageRender = function(pComponent, cComponent, opt_pElement) {
  * @param {goog.ui.Component} newpage the new page.
  */
 ma.uiUtil.changePage = function(newpage) {
+ ma.uiUtil.logger_.finest('ChangePage called:');
   if (ma.pages.currentPage !== undefined) {
-    ma.pages.currentPage.dispose();
+  goog.dom.removeChildren(ma.GLOBAL_primaryContainer);  
+    ma.pages.currentPage.exitDocument();
   }
   newpage.render(ma.GLOBAL_primaryContainer);
   ma.pages.currentPage = newpage;
@@ -53,27 +57,30 @@ ma.uiUtil.changePage = function(newpage) {
  * @return {boolean} is authenticated.
  */
 ma.uiUtil.authenticate = function() {
- goog.debug.Logger.getLogger('ma.uiUtil').finest('authenticate called:');
+ ma.uiUtil.logger_.finest('authenticate called:');
   if (goog.net.cookies.get('session_id') === undefined) {
     return false;
   }
   return true;
 };
 
+/** @type {Boolean} */
+ma.uiUtil.loginPending=false;
 
 /**
  *
  * @param {goog.events.Event} e the event.
  */
 ma.uiUtil.navCallback = function(e) {
- goog.debug.Logger.getLogger('ma.uiUtil').finest(
-     'app.navCallback called:' + e.token);
-  if (e.token === 'LOGIN') { return; }
+ ma.uiUtil.logger_.finest( 'navCallback called:' + e.token);
+  if (e.token === 'LOGIN' && ma.uiUtil.loginPending) { return; }
   if (ma.uiUtil.authenticate()) {
     ma.uiUtil.dispatcher(e.token);
+    ma.uiUtil.loginPending = false;
   } else {
     app.TARGET_PAGE = location.hash.substr(1);
     location.hash = 'LOGIN';
+    ma.uiUtil.loginPending = true;
     ma.pages.dispatchEvent(new ma.plEvent('LOGIN'));
   }
 };
@@ -83,10 +90,10 @@ ma.uiUtil.navCallback = function(e) {
  *
  */
 ma.uiUtil.dispatcher = function(request_) {
-  goog.debug.Logger.getLogger('ma.uiUtil').finest('dispatcher Called');
+ ma.uiUtil.logger_.finest('dispatcher called');
   /** @type {goog.Uri} */
   var urlData = goog.Uri.parse(request_);
-  /** @type string*/
+  /** @type {string}*/
   var key;
   /** @type {Object} */
   var qdObject = {};
