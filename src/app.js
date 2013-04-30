@@ -11,6 +11,7 @@ goog.require('ma.MainLauncher');
 goog.require('ma.Page2');
 goog.require('ma.pages');
 goog.require('ma.uiUtil');
+goog.require('ma.AccessGroup');
 
 /**
  * A reference to the class logger
@@ -41,15 +42,7 @@ app.start = function() {
       ma.uiUtil.navCallback);
   app.hist.setEnabled(true);
 
-
-
 };
-
-
-
-
-
-
 
 
 /**ma.pages.addEventListener('LOGIN_PAGE', app.showLoginWeb, false);

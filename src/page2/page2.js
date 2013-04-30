@@ -146,12 +146,6 @@ alert('ok');
 
 
 
-
-
-
-
-
-
 ma.pages.addEventListener('PAGE2',
     function(e) {
       if (app.page2Web === undefined) {

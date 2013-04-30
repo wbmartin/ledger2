@@ -13,11 +13,12 @@
 // limitations under the License.
 
 /**
- * @fileoverview A mainLauncher component.
+ * @fileoverview A accessGroups component.
  *
  */
-goog.provide('ma.MainLauncher');
+goog.provide('ma.AccessGroup');
 
+goog.require('goog.Uri');
 goog.require('goog.debug.Logger');
 goog.require('goog.dom');
 goog.require('goog.dom.forms');
@@ -28,9 +29,10 @@ goog.require('goog.events.KeyHandler');
 goog.require('goog.events.KeyHandler.EventType');
 goog.require('goog.net.XhrIo');
 goog.require('goog.ui.Component');
-goog.require('ma.MainLauncherWebView');
 goog.require('ma.pages');
 goog.require('ma.uiUtil');
+goog.require('ma.uiUtilForm');
+goog.require('ma.uiUtilFormInput');
 
 
 /**
@@ -39,8 +41,10 @@ goog.require('ma.uiUtil');
  * @extends {goog.ui.Component}
  * @constructor
  */
-ma.MainLauncher = function(opt_domHelper) {
+ma.AccessGroups = function(opt_domHelper) {
   goog.ui.Component.call(this, opt_domHelper);
+
+
   /**
    * Event handler for this object.
    * @type {goog.events.EventHandler}
@@ -61,60 +65,46 @@ ma.MainLauncher = function(opt_domHelper) {
    * @type {goog.debug.Logger}
    * @private
    */
-  this.logger_ = goog.debug.Logger.getLogger('ma.MainLauncher');
+  this.logger_ = goog.debug.Logger.getLogger('ma.AccessGroups');
   this.logger_.setLevel(ma.CONST_DEFAULT_LOG_LEVEL);
   this.logger_.finest('Constructor Called');
 };
-goog.inherits(ma.MainLauncher, goog.ui.Component);
+goog.inherits(ma.AccessGroups, goog.ui.Component);
 
 
 
 /**
  * Creates an initial DOM representation for the component.
  */
-ma.MainLauncher.prototype.createDom = function() {
+ma.AccessGroups.prototype.createDom = function() {
   this.logger_.finest('createDom Called');
   this.decorateInternal(this.dom_.createElement('div'));
 };
 
 
 /**
- * Decorates an existing HTML DIV element as a SampleComponent.
+ * Decorates an existing HTML DIV element.
  *
  * @param {Element} element The DIV element to decorate. The element's
  *    text, if any will be used as the component's label.
  */
-ma.MainLauncher.prototype.decorateInternal = function(element) {
+ma.AccessGroups.prototype.decorateInternal = function(element) {
   this.logger_.finest('decorateInternal Called');
   this.setElementInternal(element);
-  var row = goog.dom.createDom('div', {'class': 'row'});
+  this.pageRow = goog.dom.createDom('div',{'class':'row'});
+  this.accessGroupsList = goog.dom.createDom('div',{'class':'span6', 'style':'background:blue'},'ok');
+  this.accessGroupsEditPage = goog.dom.createDom('div',{'class':'span6', 'style':'background:red'},'ok');
+  goog.dom.appendChild(this.pageRow,this.accessGroupsList );
+  goog.dom.appendChild(this.pageRow,this.accessGroupsEditPage);
 
-  soy.renderElement(this.getElement(), ma.MainLauncherWebView.top);
-  
-  this.accessGroupsIcon = goog.dom.createDom('div', {'class': 'span2 largeIcon'},
-      goog.dom.createDom('div', {'class': 'sprite64Icon keyIcon center'}),'AccessGroups');
-  this.eh_.listen(this.accessGroupsIcon, goog.events.EventType.CLICK,
-      this.onAccessGroupsIconClicked_);
-  goog.dom.appendChild(row, this.accessGroupsIcon);
+  goog.dom.appendChild(this.element_, this.pageRow);
 
-  
-
-
-
-  goog.dom.appendChild(this.getElement(), row);
-
-
- // this.eh_.listen(this.mainLauncherButton,
- //     goog.events.EventType.CLICK, this.submitMainLauncherCreds);
-  //this.kh_ = new goog.events.KeyHandler(element);
-  //this.eh_.listen(this.kh_,
-      //goog.events.KeyHandler.EventType.KEY, this.onKey_);
-};
+  };
 
 
 
 /** @override */
-ma.MainLauncher.prototype.dispose = function() {
+ma.AccessGroups.prototype.dispose = function() {
   this.logger_.finest('dispose Called');
   goog.base(this, 'dispose');
   this.eh_.dispose();
@@ -125,7 +115,7 @@ ma.MainLauncher.prototype.dispose = function() {
 /**
  * Called when component's element is known to be in the document.
  */
-ma.MainLauncher.prototype.enterDocument = function() {
+ma.AccessGroups.prototype.enterDocument = function() {
   this.logger_.finest('enterDocument Called');
   goog.base(this, 'enterDocument');
 };
@@ -135,42 +125,47 @@ ma.MainLauncher.prototype.enterDocument = function() {
  * Called when component's element is known to have been removed from the
  * document.
  */
-ma.MainLauncher.prototype.exitDocument = function() {
+ma.AccessGroups.prototype.exitDocument = function() {
   this.logger_.finest('exitDocument Called');
   goog.base(this, 'exitDocument');
 };
 
 
-
-
-
 /**
- * Handles specific icon clicks.
- * @param {goog.events.Event} event The click event.
- * @private
+ *
+ *
  */
-ma.MainLauncher.prototype.onAccessGroupsIconClicked_ = function(event) {
-  app.hist.setToken('AccessGroup');
+ma.AccessGroups.prototype.submitAccessGroupsCreds = function() {
+  goog.net.XhrIo.send(ma.CONST_PRIMARY_SERVER_URL,
+        this.handleAccessGroupsResponse, 'POST', this.f1.getFormDataString());
 };
 
 
+/**
+ * @param {goog.events.Event} e the event.
+ *
+ *
+ */
+ma.AccessGroups.prototype.handleAccessGroupsResponse = function(e) {
+  /** @type {Object} */
+    var obj = e.target.getResponseJson();
+    var session = obj['rows'][0]['session_id'];
+    var userId = obj['rows'][0]['user_id'];
+    if (session !== '') {
+      var sessionExpirationSeconds = 60 * 20;
+      goog.net.cookies.set('session_id', session, sessionExpirationSeconds);
+      goog.net.cookies.set('user_id', userId, sessionExpirationSeconds);
 
+      app.hist.setToken('MainLauncher');
+    } else {
+      alert('failed');
+    }
+};
 
-
-
-
-
-
-
-
-
-ma.pages.addEventListener('MainLauncher',
+ma.pages.addEventListener('AccessGroup',
     function(e) {
-      if (app.mainLauncherWeb === undefined) {
-        app.mainLauncherWeb = new ma.MainLauncher();
+      if (app.accessGroupsWeb === undefined) {
+        app.accessGroupsWeb = new ma.AccessGroups();
       }
-      //ma.pages.currentPage.dispose();
-      //app.mainLauncherWeb.render(ma.GLOBAL_primaryContainer);
-      ma.uiUtil.changePage(app.mainLauncherWeb);
+      ma.uiUtil.changePage(app.accessGroupsWeb);
     }, false);
-

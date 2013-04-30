@@ -84,7 +84,7 @@ ma.Login.prototype.createDom = function() {
 
 
 /**
- * Decorates an existing HTML DIV element as a SampleComponent.
+ * Decorates an existing HTML DIV element.
  *
  * @param {Element} element The DIV element to decorate. The element's
  *    text, if any will be used as the component's label.
@@ -179,11 +179,8 @@ ma.Login.prototype.handleLoginResponse = function(e) {
 
 ma.pages.addEventListener('LOGIN',
     function(e) {
-      //alert(e.payload);
-      //app.logger_.finest('showLoginWeb called');
       if (app.loginWeb === undefined) {
         app.loginWeb = new ma.Login();
       }
       ma.uiUtil.changePage(app.loginWeb);
     }, false);
-
