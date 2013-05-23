@@ -25,8 +25,6 @@ goog.require('goog.dom.classes');
 goog.require('ma.uiUtil');
 
 /**
- * @param {string=} opt_resource the default resource for the form.
- * @param {string=} opt_action the default action for the form.
  * @param {goog.dom.DomHelper=} opt_domHelper DOM helper to use.
  * @extends {goog.ui.Component}
  * @constructor
@@ -34,7 +32,7 @@ goog.require('ma.uiUtil');
 
 ma.uiUtilTable = function(opt_domHelper) {
   goog.ui.Component.call(this, opt_domHelper);
-  
+
   /**
    * Event handler for this object.
    * @type {goog.events.EventHandler}
@@ -49,6 +47,14 @@ ma.uiUtilTable = function(opt_domHelper) {
   this.logger_ = goog.debug.Logger.getLogger('ma.uiUtilTable');
   this.logger_.setLevel(ma.CONST_DEFAULT_LOG_LEVEL);
   this.logger_.finest('Constructor Called');
+  /** @type {Array}
+   *  @private
+   */
+  this.data_ = new Array();
+  /** @type {Array}
+   *  @private
+   */
+  this.columns_ = new Array();
 
 };
 goog.inherits(ma.uiUtilTable, goog.ui.Component);
@@ -66,7 +72,8 @@ this.formStyle_ = style;
  */
 ma.uiUtilTable.prototype.createDom = function() {
   this.logger_.finest('createDom Called');
-  this.decorateInternal(this.dom_.createDom('div'));
+  this.decorateInternal(this.dom_.createDom('table'));
+  /** @type {Element} */
 };
 
 
@@ -78,9 +85,14 @@ ma.uiUtilTable.prototype.createDom = function() {
  */
 ma.uiUtilTable.prototype.decorateInternal = function(element) {
   this.logger_.finest('decorateInternal Called');
-  this.setElementInternal(element);
-  this.t = goog.dom.createDom('table');
-  
+  this.wrappingDiv = goog.dom.createDom('div');
+  this.table = element;
+  goog.dom.appendChild(this.wrappingDiv, this.table);
+  this.setElementInternal(this.wrappingDiv);
+  this.tBody_ = goog.dom.createDom('tbody');
+  this.tHeader_ = goog.dom.createDom('thead');
+  goog.dom.appendChild(this.table, this.tHeader_);
+  goog.dom.appendChild(this.table, this.tBody_);
 };
 
 
@@ -114,6 +126,60 @@ ma.uiUtilTable.prototype.exitDocument = function() {
 };
 
 
+/**
+ *
+ *
+ *
+ */
+ma.uiUtilTable.prototype.refreshHeader = function() {
+  this.displayColumnCount = this.columns_.length;
+  var colNdx;
+  var tempTHeader = goog.dom.createDom('thead');
+  this.activeRow = goog.dom.createDom('tr');
+  for (colNdx = 0; colNdx < this.displayColumnCount; colNdx++) {
+    goog.dom.appendChild(this.activeRow,
+        goog.dom.createDom('th', null, this.columns_[colNdx].displayName));
+
+  }
+  goog.dom.appendChild(tempTHeader, this.activeRow);
+  this.tHeader_.remove();
+  this.tHeader_ = tempTHeader;
+  goog.dom.appendChild(this.table, this.tHeader_);
+};
+
+/**
+ *
+ *
+ *
+ */
+ma.uiUtilTable.prototype.refreshData = function() {
+  /** @type {number} */
+  var rowNdx;
+  /** @type {number} */
+  var colNdx;
+  this.localRowCount = this.data_.length;
+  this.displayColumnCount = this.columns_.length;
+
+  var tempTBody = goog.dom.createDom('tbody');
+
+  for (rowNdx = 0; rowNdx < this.localRowCount; rowNdx++) {
+    this.activeRow = goog.dom.createDom('tr');
+    for (colNdx = 0; colNdx < this.displayColumnCount; colNdx++) {
+      goog.dom.appendChild(this.activeRow,
+          goog.dom.createDom('td', null,
+            this.data_[rowNdx][this.columns_[colNdx].srcName])
+      );
+    }
+     goog.dom.appendChild(tempTBody, this.activeRow);
+  }
+
+  this.refreshHeader();
+
+  this.tBody_.remove();
+  this.tBody_ = tempTBody;
+  goog.dom.appendChild(this.table, this.tBody_);
+
+};
 
 
 

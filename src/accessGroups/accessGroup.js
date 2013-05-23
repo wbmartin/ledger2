@@ -91,11 +91,13 @@ ma.AccessGroups.prototype.createDom = function() {
 ma.AccessGroups.prototype.decorateInternal = function(element) {
   this.logger_.finest('decorateInternal Called');
   this.setElementInternal(element);
-  this.pageRow = goog.dom.createDom('div',{'class':'row'});
-  this.accessGroupsList = goog.dom.createDom('div',{'class':'span6', 'style':'background:blue'},'ok');
-  this.accessGroupsEditPage = goog.dom.createDom('div',{'class':'span6', 'style':'background:red'},'ok');
-  goog.dom.appendChild(this.pageRow,this.accessGroupsList );
-  goog.dom.appendChild(this.pageRow,this.accessGroupsEditPage);
+  this.pageRow = goog.dom.createDom('div', {'class': 'row'});
+  this.accessGroupsList = goog.dom.createDom('div',
+      {'class': 'span6', 'style': 'background:blue'},'ok');
+  this.accessGroupsEditPage = goog.dom.createDom('div',
+      {'class': 'span6', 'style': 'background:red'},'ok');
+  goog.dom.appendChild(this.pageRow, this.accessGroupsList);
+  goog.dom.appendChild(this.pageRow, this.accessGroupsEditPage);
 
   goog.dom.appendChild(this.element_, this.pageRow);
 

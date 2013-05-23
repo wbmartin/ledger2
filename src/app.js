@@ -5,13 +5,13 @@ goog.require('goog.debug.DivConsole');
 goog.require('goog.debug.Logger');
 goog.require('goog.dom');
 goog.require('goog.net.Cookies');
+goog.require('ma.AccessGroup');
 goog.require('ma.CONST');
 goog.require('ma.Login');
 goog.require('ma.MainLauncher');
 goog.require('ma.Page2');
 goog.require('ma.pages');
 goog.require('ma.uiUtil');
-goog.require('ma.AccessGroup');
 
 /**
  * A reference to the class logger
@@ -26,6 +26,8 @@ app.logger_ = goog.debug.Logger.getLogger('app');
  */
 app.start = function() {
   /** @type {goog.debug.DivConsole} */
+  //debug.FancyWindow is another option - the div console however
+  //can be hidden and collecting the whole time
   var logconsole =
     new goog.debug.DivConsole(goog.dom.getElement('loggerConsole'));
   logconsole.setCapturing(true);

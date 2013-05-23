@@ -78,6 +78,10 @@
 Google Closure Controls Demo
 http://closure-library.googlecode.com/svn/trunk/closure/goog/demos/index.html
 
+Style Guide:
+
+http://google-styleguide.googlecode.com/svn/trunk/javascriptguide.xml
+
 Initial Setup
 vi /etc/apache2/sites-available/default
 >>>>>>>>>>>>>>>>>>>>>>>

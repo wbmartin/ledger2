@@ -31,6 +31,7 @@ goog.require('goog.ui.Component');
 goog.require('ma.MainLauncherWebView');
 goog.require('ma.pages');
 goog.require('ma.uiUtil');
+goog.require('ma.uiUtilTable');
 
 
 /**
@@ -90,18 +91,29 @@ ma.MainLauncher.prototype.decorateInternal = function(element) {
   var row = goog.dom.createDom('div', {'class': 'row'});
 
   soy.renderElement(this.getElement(), ma.MainLauncherWebView.top);
-  
-  this.accessGroupsIcon = goog.dom.createDom('div', {'class': 'span2 largeIcon'},
-      goog.dom.createDom('div', {'class': 'sprite64Icon keyIcon center'}),'AccessGroups');
+
+  this.accessGroupsIcon = goog.dom.createDom('div',
+      {'class': 'span2 largeIcon'},
+      goog.dom.createDom('div',
+        {'class': 'sprite64Icon keyIcon center'}),
+      'AccessGroups');
   this.eh_.listen(this.accessGroupsIcon, goog.events.EventType.CLICK,
       this.onAccessGroupsIconClicked_);
   goog.dom.appendChild(row, this.accessGroupsIcon);
 
-  
+
 
 
 
   goog.dom.appendChild(this.getElement(), row);
+  this.tbl = new ma.uiUtilTable();
+  this.tbl.render(this.getElement());
+  this.tbl.data_ = [{'a': '1', 'b': '2', 'c': '3'},
+    {'a': '4', 'b': '5', 'c': '6'}
+  ];
+  this.tbl.columns_ = [{srcName: 'a', displayName: 'A'},
+  {srcName: 'b', displayName: 'B'}, {srcName: 'c', displayName: 'C'}];
+  this.tbl.refreshData();
 
 
  // this.eh_.listen(this.mainLauncherButton,
