@@ -98,5 +98,7 @@ ScriptAlias /ledger2/cgi-bin/ /home/wbmartin/www/ledger2/deploy/cgi-bin/
 sudo ln -s /home/wbmartin/www/ledger2 /var/www/ledger2
 sudo /etc/init.d/apache2 restart
 
+>>>>>>>>>>>>>>>>>>
+psql -d concordc_ledgerdev -U concordc_ledgerdev -f buildSQLClause.sql
 -->
 

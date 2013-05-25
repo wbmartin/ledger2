@@ -11,7 +11,7 @@
 \i db/securitySchema/010_CreateSP_InitSession.sql
 \i db/securitySchema/011_CreateSP_IsSessionValid.sql
 \i db/securitySchema/012_CreateSP_IsUserAuthorized.sql
-\i db/ssecuritySchema/020_CreateProc_CRUD_SecurityProfile.sql
+\i db/securitySchema/020_CreateProc_CRUD_SecurityProfile.sql
 \i db/securitySchema/030_CreateProc_CRUD_SecurityPrivilege.sql 
 \i db/securitySchema/040_CreateProc_CRUD_security_profile_grant.sql
 \i db/securitySchema/050_CreateProc_CRUD_security_user.sql

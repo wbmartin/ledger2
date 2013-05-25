@@ -136,7 +136,8 @@ ma.uiUtilForm.prototype.addInput = function(var_args) {
  * @return {string} the forms query data string.
  */
 ma.uiUtilForm.prototype.getFormDataString = function() {
-  var qdstr = '&spwfResource=' + this.resource + '&spwfAction=' + this.action;
+  
+  var qdstr = ma.uiUtil.buildResourceActionString (this.resource, this.action); 
   return goog.dom.forms.getFormDataString(
       /** @type {HTMLFormElement}*/ (this.element_)) + qdstr;
 };

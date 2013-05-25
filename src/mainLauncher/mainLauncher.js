@@ -106,15 +106,7 @@ ma.MainLauncher.prototype.decorateInternal = function(element) {
 
 
   goog.dom.appendChild(this.getElement(), row);
-  this.tbl = new ma.uiUtilTable();
-  this.tbl.render(this.getElement());
-  this.tbl.data_ = [{'a': '1', 'b': '2', 'c': '3'},
-    {'a': '4', 'b': '5', 'c': '6'}
-  ];
-  this.tbl.columns_ = [{srcName: 'a', displayName: 'A'},
-  {srcName: 'b', displayName: 'B'}, {srcName: 'c', displayName: 'C'}];
-  this.tbl.refreshData();
-
+  
 
  // this.eh_.listen(this.mainLauncherButton,
  //     goog.events.EventType.CLICK, this.submitMainLauncherCreds);

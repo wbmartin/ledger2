@@ -68,6 +68,7 @@ ma.AccessGroups = function(opt_domHelper) {
   this.logger_ = goog.debug.Logger.getLogger('ma.AccessGroups');
   this.logger_.setLevel(ma.CONST_DEFAULT_LOG_LEVEL);
   this.logger_.finest('Constructor Called');
+  this.serverURL = ma.CONST_SERVER_CONTEXT + '/server.pl';
 };
 goog.inherits(ma.AccessGroups, goog.ui.Component);
 
@@ -93,12 +94,19 @@ ma.AccessGroups.prototype.decorateInternal = function(element) {
   this.setElementInternal(element);
   this.pageRow = goog.dom.createDom('div', {'class': 'row'});
   this.accessGroupsList = goog.dom.createDom('div',
-      {'class': 'span6', 'style': 'background:blue'},'ok');
+      {'class': 'span6'});
   this.accessGroupsEditPage = goog.dom.createDom('div',
       {'class': 'span6', 'style': 'background:red'},'ok');
+  
+
+  this.accessGroupsTable = new ma.uiUtilTable();
+  this.accessGroupsTable.render(this.accessGroupsList);
+    this.accessGroupsTable.columns_ = [{srcName: 'a', displayName: 'A'},
+  {srcName: 'b', displayName: 'B'}, {srcName: 'c', displayName: 'C'}];
+  
+ 
   goog.dom.appendChild(this.pageRow, this.accessGroupsList);
   goog.dom.appendChild(this.pageRow, this.accessGroupsEditPage);
-
   goog.dom.appendChild(this.element_, this.pageRow);
 
   };
@@ -137,9 +145,13 @@ ma.AccessGroups.prototype.exitDocument = function() {
  *
  *
  */
-ma.AccessGroups.prototype.submitAccessGroupsCreds = function() {
-  goog.net.XhrIo.send(ma.CONST_PRIMARY_SERVER_URL,
-        this.handleAccessGroupsResponse, 'POST', this.f1.getFormDataString());
+ma.AccessGroups.prototype.selectAccessGroups = function() {
+  var qstr = ma.uiUtil.buildResourceActionString('SECURITY_PROFILE', 'SELECT');
+  this.serverCall = new ma.serverCall(this.serverURL, this);
+  this.serverCall.make(this.handleSelectAccessGroupsResponse, qstr);
+  //goog.net.XhrIo.send(this.serverURL,
+  //      this.handleSelectAccessGroupsResponse, 
+  //      'POST', qstr);
 };
 
 
@@ -148,21 +160,83 @@ ma.AccessGroups.prototype.submitAccessGroupsCreds = function() {
  *
  *
  */
-ma.AccessGroups.prototype.handleAccessGroupsResponse = function(e) {
+ma.AccessGroups.prototype.handleSelectAccessGroupsResponse = function(e) {
+  this.logger_.finest('handler called');
   /** @type {Object} */
     var obj = e.target.getResponseJson();
-    var session = obj['rows'][0]['session_id'];
-    var userId = obj['rows'][0]['user_id'];
-    if (session !== '') {
-      var sessionExpirationSeconds = 60 * 20;
-      goog.net.cookies.set('session_id', session, sessionExpirationSeconds);
-      goog.net.cookies.set('user_id', userId, sessionExpirationSeconds);
-
-      app.hist.setToken('MainLauncher');
-    } else {
-      alert('failed');
+    if(!obj['SERVER_SIDE_FAIL']){
+      var rowNdx = 0;
+      var rowCount = obj.rows.length;
+      for(rowNdx = 0; rowNdx < rowCount; rowNdx++){
+        this.logger_.finest('test worked');
+      }
     }
 };
+
+/**
+ * @param {goog.events.Event} e the event.
+ * @return {Object} the handled object.
+ */
+verifyServerResponse = function (){
+  
+
+}
+
+
+
+/**
+ *
+ * @constructor
+ * @param {string} URL the target Server URL.
+ * @param {goog.debug.Logger} opt_logger.
+ */ 
+ma.serverCall = function(URL, opt_caller){
+  /** @type {string} */
+  this.url = URL;
+  /** @type {string} */
+  this.serverMethod = 'POST';
+  /** @param {goog.debug.Logger} */
+  this.logger_ = opt_caller.logger_ || goog.debug.Logger.getLogger('ma.ServerCall') ;
+  this.logger_.finest('servercall constructed');  
+  /** @type {Object} */
+  this.caller = opt_caller;
+
+}
+/** @type {number} the number of Server Calls awaiting response. */
+ma.serverCall.pendingServerCalls = 0;
+
+/**
+ * @param {Function} responseHandler the actual Response Handler.
+ * @param {goog.events.Event} e the event.
+ */
+ma.serverCall.prototype.responseHandlerWrapper = function(responseHandler, caller, e){
+  caller.logger_.finest('handlerWrapper');  
+  if (ma.serverCall.pendingServerCount > 0) {
+    ma.serverCall.pendingServerCount--;
+  }
+
+  goog.bind(responseHandler,caller)(e);
+}
+
+
+/**
+ * Make the server call
+ * @param {Function} responseHandler  the response handler.
+ * @param {string} queryStr the query String to send.
+ */
+ma.serverCall.prototype.make = function(responseHandler, queryStr){
+  this.logger_.finest('server call made');  
+  ma.serverCall.pendingServerCount++;
+  var wrapperPartial = goog.partial(this.responseHandlerWrapper,  
+      responseHandler, this.caller);
+  goog.net.XhrIo.send(this.url, wrapperPartial, 
+      this.serverMethod, queryStr);
+}
+
+
+
+
+
 
 ma.pages.addEventListener('AccessGroup',
     function(e) {
@@ -170,4 +244,15 @@ ma.pages.addEventListener('AccessGroup',
         app.accessGroupsWeb = new ma.AccessGroups();
       }
       ma.uiUtil.changePage(app.accessGroupsWeb);
+
+      app.accessGroupsWeb.selectAccessGroups();
+         
+    app.accessGroupsWeb.accessGroupsTable.data_ = [{'a': '1', 'b': '2', 'c': '3'},
+    {'a': '4', 'b': '5', 'c': '6'}
+  ];
+    app.accessGroupsWeb.accessGroupsTable.refreshData();
+ 
+
     }, false);
+
+

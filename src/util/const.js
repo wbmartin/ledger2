@@ -12,6 +12,7 @@ ma.CONST_DEFAULT_LOG_LEVEL = goog.debug.Logger.Level.ALL;
  * @type {string}
  */
 ma.CONST_PRIMARY_SERVER_URL = './cgi-bin/server.pl';
+ma.CONST_SERVER_CONTEXT = './cgi-bin';
 
 
 
