@@ -35,8 +35,10 @@ goog.require('ma.uiUtil');
 ma.uiUtilForm = function(opt_resource, opt_action, opt_domHelper) {
   goog.ui.Component.call(this, opt_domHelper);
   this.inputs = new Array();
-  this.resource = opt_resource;
-  this.action = opt_action;
+  /** @type {string} */
+  this.resource = opt_resource || '';
+  /** @type {string} */
+  this.action = opt_action || '';
   /**
    * Event handler for this object.
    * @type {goog.events.EventHandler}
@@ -136,8 +138,8 @@ ma.uiUtilForm.prototype.addInput = function(var_args) {
  * @return {string} the forms query data string.
  */
 ma.uiUtilForm.prototype.getFormDataString = function() {
-  
-  var qdstr = ma.uiUtil.buildResourceActionString (this.resource, this.action); 
+
+  var qdstr = ma.uiUtil.buildResourceActionString(this.resource, this.action);
   return goog.dom.forms.getFormDataString(
       /** @type {HTMLFormElement}*/ (this.element_)) + qdstr;
 };

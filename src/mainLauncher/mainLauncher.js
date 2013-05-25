@@ -106,7 +106,7 @@ ma.MainLauncher.prototype.decorateInternal = function(element) {
 
 
   goog.dom.appendChild(this.getElement(), row);
-  
+
 
  // this.eh_.listen(this.mainLauncherButton,
  //     goog.events.EventType.CLICK, this.submitMainLauncherCreds);

@@ -58,11 +58,11 @@ ma.uiUtil.changePage = function(newpage) {
 /**
  * @param {string} resource the Resource to call server-side.
  * @param {string} action the Action to call server-side.
- *
+ * @return {string} the resource action string.
  */
-ma.uiUtil.buildResourceActionString = function(resource, action){
+ma.uiUtil.buildResourceActionString = function(resource, action) {
   return '&spwfResource=' + resource + '&spwfAction=' + action;
-}
+};
 
 
 /**
