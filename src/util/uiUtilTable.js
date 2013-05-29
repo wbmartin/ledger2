@@ -159,15 +159,24 @@ ma.uiUtilTable.prototype.refreshData = function() {
   var colNdx;
   this.localRowCount = this.data_.length;
   this.displayColumnCount = this.columns_.length;
-
+  /** @type {Element} */
   var tempTBody = goog.dom.createDom('tbody');
+  /** @type {Element} */
+  var tdSpan= null;
+  /** @type {string} */
+  var displayFragment = null;
 
   for (rowNdx = 0; rowNdx < this.localRowCount; rowNdx++) {
     this.activeRow = goog.dom.createDom('tr');
     for (colNdx = 0; colNdx < this.displayColumnCount; colNdx++) {
-      goog.dom.appendChild(this.activeRow,
-          goog.dom.createDom('td', null,
-            this.data_[rowNdx][this.columns_[colNdx].srcName])
+      if (typeof (this.columns_[colNdx].src) === 'function') {
+        displayFragment = this.columns_[colNdx].src(this.data_[rowNdx]);
+      } else {
+        displayFragment =  this.data_[rowNdx][this.columns_[colNdx].src];
+      }
+      tdSpan = goog.dom.createDom('span',null,displayFragment);
+      goog.dom.appendChild(this.activeRow, 
+          goog.dom.createDom('td', null,tdSpan)
       );
     }
      goog.dom.appendChild(tempTBody, this.activeRow);
@@ -178,8 +187,17 @@ ma.uiUtilTable.prototype.refreshData = function() {
   this.tBody_.remove();
   this.tBody_ = tempTBody;
   goog.dom.appendChild(this.table, this.tBody_);
-
 };
+
+/**
+ *
+ *
+ *
+ */
+ma.uiUtilTable.prototype.clearData = function() {
+  this.data_ = new Array();
+}
+
 
 
 

@@ -47,12 +47,22 @@ ma.uiUtil.stageRender = function(pComponent, cComponent, opt_pElement) {
  */
 ma.uiUtil.changePage = function(newpage) {
  ma.uiUtil.logger_.finest('ChangePage called:');
-  if (ma.pages.currentPage !== undefined) {
-  goog.dom.removeChildren(ma.GLOBAL_primaryContainer);
+  if (ma.pages.currentPage !== undefined && ma.pages.currentPage !== newpage) {
+    goog.dom.removeChildren(ma.GLOBAL_primaryContainer);
     ma.pages.currentPage.exitDocument();
   }
-  newpage.render(ma.GLOBAL_primaryContainer);
-  ma.pages.currentPage = newpage;
+  if (ma.pages.currentPage !== newpage) {
+    newpage.render(ma.GLOBAL_primaryContainer);
+    ma.pages.currentPage = newpage;
+  }
+  if (typeof ma.pages.currentPage.processQueryStr === 'function'){
+    /** @type {string} */
+    var qstr = location.hash;
+    qstr = qstr.substr(qstr.indexOf('?')+1);
+    /** @type {goog.Uri.QueryData} */
+    var qd = new goog.Uri.QueryData(qstr);
+    ma.pages.currentPage.processQueryStr(qd);
+  }
 };
 
 /**

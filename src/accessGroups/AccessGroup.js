@@ -30,9 +30,12 @@ goog.require('goog.events.KeyHandler.EventType');
 goog.require('goog.net.XhrIo');
 goog.require('goog.ui.Component');
 goog.require('ma.pages');
+goog.require('ma.ServerCall');
 goog.require('ma.uiUtil');
 goog.require('ma.uiUtilForm');
 goog.require('ma.uiUtilFormInput');
+goog.require('ma.AccessGroupSOY');
+
 
 
 /**
@@ -97,19 +100,21 @@ ma.AccessGroups.prototype.decorateInternal = function(element) {
       {'class': 'span6'});
   this.accessGroupsEditPage = goog.dom.createDom('div',
       {'class': 'span6', 'style': 'background:red'},'ok');
-
-
   this.accessGroupsTable = new ma.uiUtilTable();
   this.accessGroupsTable.render(this.accessGroupsList);
-    this.accessGroupsTable.columns_ = [{srcName: 'a', displayName: 'A'},
-  {srcName: 'b', displayName: 'B'}, {srcName: 'c', displayName: 'C'}];
+  this.accessGroupsTable.columns_ = [
+    {src: 'profile_name', displayName: 'Profile Name'},
+    { displayName: 'I want to', 
+      src: function(accessGroup){
+        return soy.renderAsFragment(ma.AccessGroupSOY.iWantTo, accessGroup);
+      }
+    }
 
-
+  ];
   goog.dom.appendChild(this.pageRow, this.accessGroupsList);
   goog.dom.appendChild(this.pageRow, this.accessGroupsEditPage);
   goog.dom.appendChild(this.element_, this.pageRow);
-
-  };
+};
 
 
 
@@ -146,12 +151,10 @@ ma.AccessGroups.prototype.exitDocument = function() {
  *
  */
 ma.AccessGroups.prototype.selectAccessGroups = function() {
+  /** @type {string} */
   var qstr = ma.uiUtil.buildResourceActionString('SECURITY_PROFILE', 'SELECT');
-  this.serverCall = new ma.serverCall(this.serverURL, this);
+  this.serverCall = new ma.ServerCall(this.serverURL, this);
   this.serverCall.make(this.handleSelectAccessGroupsResponse, qstr);
-  //goog.net.XhrIo.send(this.serverURL,
-  //      this.handleSelectAccessGroupsResponse,
-  //      'POST', qstr);
 };
 
 
@@ -165,77 +168,28 @@ ma.AccessGroups.prototype.handleSelectAccessGroupsResponse = function(e) {
   /** @type {Object} */
     var obj = e.target.getResponseJson();
     if (!obj['SERVER_SIDE_FAIL']) {
+      /** @type {number} */
       var rowNdx = 0;
+      /** @type {number} */
       var rowCount = obj.rows.length;
+      this.accessGroupsTable.clearData();
       for (rowNdx = 0; rowNdx < rowCount; rowNdx++) {
+        this.accessGroupsTable.data_.push(obj.rows[rowNdx]);
         this.logger_.finest('test worked');
       }
     }
+  this.accessGroupsTable.refreshData();
 };
-
-
-
-
 /**
  *
- * @constructor
- * @param {string} URL the target Server URL.
- * @param {Object} opt_caller the original caller.
- */
-ma.serverCall = function(URL, opt_caller) {
-  /** @type {string} */
-  this.url = URL;
-  /** @type {string} */
-  this.serverMethod = 'POST';
-  /**
-   * @type {goog.debug.Logger}
-   * @private
-   * */
-  this.logger_ = opt_caller.logger_ ||
-    goog.debug.Logger.getLogger('ma.ServerCall');
-  this.logger_.finest('servercall constructed');
-  /** @type {Object} */
-  this.caller = opt_caller;
-
-
-};
-/** @type {number} the number of Server Calls awaiting response. */
-ma.serverCall.pendingServerCalls = 0;
-
-/**
- * @param {Function} responseHandler the actual Response Handler.
- * @param {Object} caller the original caller.
- * @param {goog.events.Event} e the event.
- */
-ma.serverCall.prototype.responseHandlerWrapper =
- function(responseHandler, caller, e) {
-  caller.logger_.finest('handlerWrapper');
-  if (ma.serverCall.pendingServerCalls > 0) {
-    ma.serverCall.pendingServerCalls--;
+ * @param {goog.Uri.QueryData} qd the query data object
+ */ 
+ma.AccessGroups.prototype.processQueryStr = function(queryData){
+  if(queryData.containsKey('security_profile_id')){
+  alert(queryData.get('security_profile_id'));
   }
 
-  goog.bind(responseHandler, caller)(e);
-};
-
-
-/**
- * Make the server call
- * @param {Function} responseHandler  the response handler.
- * @param {string} queryStr the query String to send.
- */
-ma.serverCall.prototype.make = function(responseHandler, queryStr) {
-  this.logger_.finest('server call made');
-  ma.serverCall.pendingServerCalls++;
-  var wrapperPartial = goog.partial(this.responseHandlerWrapper,
-      responseHandler, this.caller);
-  goog.net.XhrIo.send(this.url, wrapperPartial,
-      this.serverMethod, queryStr);
-};
-
-
-
-
-
+}
 
 ma.pages.addEventListener('AccessGroup',
     function(e) {
@@ -243,16 +197,7 @@ ma.pages.addEventListener('AccessGroup',
         app.accessGroupsWeb = new ma.AccessGroups();
       }
       ma.uiUtil.changePage(app.accessGroupsWeb);
-
       app.accessGroupsWeb.selectAccessGroups();
-
-    app.accessGroupsWeb.accessGroupsTable.data_ =
-  [{'a': '1', 'b': '2', 'c': '3'},
-    {'a': '4', 'b': '5', 'c': '6'}
-  ];
-    app.accessGroupsWeb.accessGroupsTable.refreshData();
-
-
     }, false);
 
 
