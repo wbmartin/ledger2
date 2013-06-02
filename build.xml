@@ -22,10 +22,17 @@
     </exec> 
   </target>
 <target name="plovr-publish">
-    <exec executable="java" output="${basedir}/deploy/app-compiled.js" logError="true">
+    <exec executable="java" output="${basedir}/build/app-compiled.js" logError="true">
       <arg line="-jar ${home.dir}/dev/plovr/plovr-eba786b34df9.jar build plovr-prod.config"/>
     </exec> 
   </target>
+
+<target name="plovr-debug">
+    <exec executable="java" output="${basedir}/deploy/app-compiled.js" logError="true">
+      <arg line="-jar ${home.dir}/dev/plovr/plovr-eba786b34df9.jar build plovr-debug.config"/>
+    </exec> 
+  </target>
+
 
 <target name="init">
     <!-- Create the time stamp -->
@@ -43,6 +50,29 @@
   </exec>
 </target>
 
+<target name ="jslint">
+    <fileset id="srcjs" dir="${basedir}/src/" > 
+      <include name ="**/*.js"/>
+    </fileset>
+    <pathconvert pathsep=" " property="jsfiles" refid="srcjs"/>
+    <!-- echo message="${jsfiles}"/-->
+    <exec executable="/usr/bin/node">
+      <arg line = "/usr/share/node-jslint/node_modules/jslint/bin/jslint.js"/>
+      <arg line = "--predef goog"/>
+      <arg line = "--predef ma"/>
+      <arg line = "--predef window"/>
+      <arg line = "--predef soy"/>
+      <arg line = "--predef app"/>
+      <arg line = "--white"/>
+      <arg line = "--vars"/>
+      <arg line = "--nomen"/>
+      <arg line = "--sloppy"/>
+      <arg line = "--plusplus"/>
+      <arg line = "${jsfiles}"/>
+      <!--arg line = " src/util/uiUtilForm.js"/-->
+    </exec>
+</target>
+
 <target name="fixstyle">
   <exec executable="fixjsstyle" failonerror="true" logError="true">
     <arg line=" -r ${basedir}/src/" />
@@ -51,11 +81,11 @@
 </target>
 
   <target name="cleanSource">
-         <fileset id="srcjs" dir="${basedir}/src/" > 
+    <fileset id="srcjs" dir="${basedir}/src/" > 
       <include name ="**/*.js"/>
     </fileset>
     <pathconvert pathsep=" " property="jsfiles" refid="srcjs"/>
-    <echo message="${jsfiles}"/>
+    <!--echo message="${jsfiles}"/-->
     <exec dir="${basedir}" executable="perl">
       <arg line="-p -i -e 's/[\t]+/  /g'"/>
       <arg line="${jsfiles}"/>
@@ -100,5 +130,14 @@ sudo /etc/init.d/apache2 restart
 
 >>>>>>>>>>>>>>>>>>
 psql -d concordc_ledgerdev -U concordc_ledgerdev -f buildSQLClause.sql
+
+** To install jslint
+http://blog.simplytestable.com/installing-jslint-for-command-line-use-on-ubuntu/
+sudo apt-get install nodejs npm
+mkdir /usr/share/node-jslint
+cd /usr/share/node-jslint && sudo npm install jslint
+Example Run:
+/usr/bin/node /usr/share/node-jslint/node_modules/jslint/bin/jslint.js app-compiled.js
+
 -->
 

@@ -13,6 +13,8 @@ goog.require('ma.Page2');
 goog.require('ma.pages');
 goog.require('ma.uiUtil');
 
+window['app'] = app;
+
 /**
  * A reference to the class logger
  * @type {goog.debug.Logger}
@@ -28,6 +30,7 @@ app.start = function() {
   /** @type {goog.debug.DivConsole} */
   //debug.FancyWindow is another option - the div console however
   //can be hidden and collecting the whole time
+  /** @type {goog.debug.DivConsole} */
   var logconsole =
     new goog.debug.DivConsole(goog.dom.getElement('loggerConsole'));
   logconsole.setCapturing(true);

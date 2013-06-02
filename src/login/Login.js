@@ -43,6 +43,7 @@ goog.require('ma.uiUtilFormInput');
  * @constructor
  */
 ma.Login = function(opt_domHelper) {
+
   goog.ui.Component.call(this, opt_domHelper);
 
 
@@ -78,6 +79,7 @@ goog.inherits(ma.Login, goog.ui.Component);
  * Creates an initial DOM representation for the component.
  */
 ma.Login.prototype.createDom = function() {
+
   this.logger_.finest('createDom Called');
   this.decorateInternal(this.dom_.createElement('div'));
 };
@@ -90,6 +92,7 @@ ma.Login.prototype.createDom = function() {
  *    text, if any will be used as the component's label.
  */
 ma.Login.prototype.decorateInternal = function(element) {
+
   this.logger_.finest('decorateInternal Called');
   this.setElementInternal(element);
 
@@ -102,8 +105,8 @@ ma.Login.prototype.decorateInternal = function(element) {
   this.f1.addInput(this.userid, this.password);
   this.f1.setFormStyle('form-horizontal');
   ma.uiUtil.stageRender(this, this.f1, this.container);
-  this.userid.input.value = 'ledger';
-  this.password.input.value = 'ledger';
+
+  this.f1.bind({'user_id': 'ledger', 'password': 'ledger'});
 
   this.loginButton = goog.dom.createDom('button', null, 'Login');
   goog.dom.appendChild(this.container, this.loginButton);
@@ -120,6 +123,7 @@ ma.Login.prototype.decorateInternal = function(element) {
 
 /** @override */
 ma.Login.prototype.dispose = function() {
+
   this.logger_.finest('dispose Called');
   goog.base(this, 'dispose');
   this.eh_.dispose();
@@ -131,6 +135,7 @@ ma.Login.prototype.dispose = function() {
  * Called when component's element is known to be in the document.
  */
 ma.Login.prototype.enterDocument = function() {
+
   this.logger_.finest('enterDocument Called');
   goog.base(this, 'enterDocument');
 };
@@ -141,6 +146,7 @@ ma.Login.prototype.enterDocument = function() {
  * document.
  */
 ma.Login.prototype.exitDocument = function() {
+
   this.logger_.finest('exitDocument Called');
   goog.base(this, 'exitDocument');
 };
@@ -151,6 +157,7 @@ ma.Login.prototype.exitDocument = function() {
  *
  */
 ma.Login.prototype.submitLoginCreds = function() {
+
   goog.net.XhrIo.send(ma.CONST_PRIMARY_SERVER_URL,
         this.handleLoginResponse, 'POST', this.f1.getFormDataString());
 };
@@ -162,15 +169,19 @@ ma.Login.prototype.submitLoginCreds = function() {
  *
  */
 ma.Login.prototype.handleLoginResponse = function(e) {
-  /** @type {Object} */
+
+    /** @type {Object} */
     var obj = e.target.getResponseJson();
+    /** @type {string} */
     var session = obj['rows'][0]['session_id'];
+    /** @type {string} */
     var userId = obj['rows'][0]['user_id'];
+    /** @type {number} */
+    var sessionExpirationSeconds = 60 * 20;
+
     if (session !== '') {
-      var sessionExpirationSeconds = 60 * 20;
       goog.net.cookies.set('session_id', session, sessionExpirationSeconds);
       goog.net.cookies.set('user_id', userId, sessionExpirationSeconds);
-
       app.hist.setToken('MainLauncher');
     } else {
       alert('failed');

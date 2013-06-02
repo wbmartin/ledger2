@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /**
- * @fileoverview User Interface Utils.
+ * @fileoverview User Interface Utils - table.
  *
  */
 
@@ -31,6 +31,7 @@ goog.require('ma.uiUtil');
  */
 
 ma.uiUtilTable = function(opt_domHelper) {
+
   goog.ui.Component.call(this, opt_domHelper);
 
   /**
@@ -50,11 +51,11 @@ ma.uiUtilTable = function(opt_domHelper) {
   /** @type {Array}
    *  @private
    */
-  this.data_ = new Array();
+  this.data_ = [];
   /** @type {Array}
    *  @private
    */
-  this.columns_ = new Array();
+  this.columns_ = [];
 
 };
 goog.inherits(ma.uiUtilTable, goog.ui.Component);
@@ -64,13 +65,15 @@ goog.inherits(ma.uiUtilTable, goog.ui.Component);
  * @param {string} style the form style.
  */
 ma.uiUtilTable.prototype.setFormStyle = function(style) {
-this.formStyle_ = style;
+
+  this.formStyle_ = style;
 };
 
 /**
  * Creates an initial DOM representation for the component.
  */
 ma.uiUtilTable.prototype.createDom = function() {
+
   this.logger_.finest('createDom Called');
   this.decorateInternal(this.dom_.createDom('table'));
   /** @type {Element} */
@@ -84,6 +87,7 @@ ma.uiUtilTable.prototype.createDom = function() {
  * @param {Element} element the form to decorate.
  */
 ma.uiUtilTable.prototype.decorateInternal = function(element) {
+
   this.logger_.finest('decorateInternal Called');
   this.wrappingDiv = goog.dom.createDom('div');
   this.table = element;
@@ -98,6 +102,7 @@ ma.uiUtilTable.prototype.decorateInternal = function(element) {
 
 /** @override */
 ma.uiUtilTable.prototype.dispose = function() {
+
   this.logger_.finest('dispose Called');
   this.eh_.dispose();
   if (!this.isDisposed()) {
@@ -111,6 +116,7 @@ ma.uiUtilTable.prototype.dispose = function() {
  * Called when component's element is known to be in the document.
  */
 ma.uiUtilTable.prototype.enterDocument = function() {
+
   this.logger_.finest('enterDocument Called');
   goog.base(this, 'enterDocument');
 };
@@ -121,6 +127,7 @@ ma.uiUtilTable.prototype.enterDocument = function() {
  * document.
  */
 ma.uiUtilTable.prototype.exitDocument = function() {
+
   this.logger_.finest('exitDocument Called');
   goog.base(this, 'exitDocument');
 };
@@ -132,8 +139,11 @@ ma.uiUtilTable.prototype.exitDocument = function() {
  *
  */
 ma.uiUtilTable.prototype.refreshHeader = function() {
+
   this.displayColumnCount = this.columns_.length;
+  /** @type {number} */
   var colNdx;
+  /** @type {Element} */
   var tempTHeader = goog.dom.createDom('thead');
   this.activeRow = goog.dom.createDom('tr');
   for (colNdx = 0; colNdx < this.displayColumnCount; colNdx++) {
@@ -162,9 +172,9 @@ ma.uiUtilTable.prototype.refreshData = function() {
   /** @type {Element} */
   var tempTBody = goog.dom.createDom('tbody');
   /** @type {Element} */
-  var tdSpan= null;
+  var tdSpan = null;
   /** @type {string} */
-  var displayFragment = null;
+  var displayFragment;
 
   for (rowNdx = 0; rowNdx < this.localRowCount; rowNdx++) {
     this.activeRow = goog.dom.createDom('tr');
@@ -172,11 +182,11 @@ ma.uiUtilTable.prototype.refreshData = function() {
       if (typeof (this.columns_[colNdx].src) === 'function') {
         displayFragment = this.columns_[colNdx].src(this.data_[rowNdx]);
       } else {
-        displayFragment =  this.data_[rowNdx][this.columns_[colNdx].src];
+        displayFragment = this.data_[rowNdx][this.columns_[colNdx].src];
       }
-      tdSpan = goog.dom.createDom('span',null,displayFragment);
-      goog.dom.appendChild(this.activeRow, 
-          goog.dom.createDom('td', null,tdSpan)
+      tdSpan = goog.dom.createDom('span', null, displayFragment);
+      goog.dom.appendChild(this.activeRow,
+          goog.dom.createDom('td', null, tdSpan)
       );
     }
      goog.dom.appendChild(tempTBody, this.activeRow);
@@ -195,8 +205,9 @@ ma.uiUtilTable.prototype.refreshData = function() {
  *
  */
 ma.uiUtilTable.prototype.clearData = function() {
-  this.data_ = new Array();
-}
+
+  this.data_ = [];
+};
 
 
 

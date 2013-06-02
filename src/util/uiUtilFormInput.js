@@ -46,6 +46,7 @@ goog.provide('ma.uiUtilFormInput');
 
 ma.uiUtilFormInput = function(lblText, inptName, opt_inputType,
     opt_domHelper) {
+
   goog.ui.Component.call(this, opt_domHelper);
   this.lblText = lblText;
   this.inputType = opt_inputType || 'text';
@@ -85,6 +86,7 @@ goog.inherits(ma.uiUtilFormInput, goog.ui.Component);
  * Creates an initial DOM representation for the component.
  */
 ma.uiUtilFormInput.prototype.createDom = function() {
+
   this.logger_.finest('createDom Called');
   this.decorateInternal(this.dom_.createDom('div', 'control-group'));
 };
@@ -96,6 +98,7 @@ ma.uiUtilFormInput.prototype.createDom = function() {
  *    text, if any will be used as the component's label.
  */
 ma.uiUtilFormInput.prototype.decorateInternal = function(element) {
+
   this.logger_.finest('decorateInternal Called');
   this.setElementInternal(element);
 
@@ -125,6 +128,7 @@ ma.uiUtilFormInput.prototype.decorateInternal = function(element) {
 
 /** @override */
 ma.uiUtilFormInput.prototype.dispose = function() {
+
   this.logger_.finest('dispose Called');
   //if (this.kh_) { this.kh_.dispose(); }
   goog.base(this, 'dispose');
@@ -134,6 +138,7 @@ ma.uiUtilFormInput.prototype.dispose = function() {
  * Called when component's element is known to be in the document.
  */
 ma.uiUtilFormInput.prototype.enterDocument = function() {
+
   this.logger_.finest('enterDocument Called');
   goog.base(this, 'enterDocument');
 };
@@ -144,6 +149,7 @@ ma.uiUtilFormInput.prototype.enterDocument = function() {
  * document.
  */
 ma.uiUtilFormInput.prototype.exitDocument = function() {
+
   this.logger_.finest('exitDocument Called');
   //this.eh_.unlisten(this.getElement(), goog.events.EventType.CLICK,
   //    this.onDivClicked_);

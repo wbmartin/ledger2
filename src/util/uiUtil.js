@@ -34,7 +34,8 @@ ma.uiUtil.logger_.setLevel(ma.CONST_DEFAULT_LOG_LEVEL);
  * @param {Element} opt_pElement the element to add.
  */
 ma.uiUtil.stageRender = function(pComponent, cComponent, opt_pElement) {
- ma.uiUtil.logger_.finest('StageRender called:');
+  'use strict';
+  ma.uiUtil.logger_.finest('StageRender called:');
   cComponent.createDom();
   opt_pElement = opt_pElement || pComponent.getElement();
   goog.dom.appendChild(opt_pElement, cComponent.getElement());
@@ -46,7 +47,12 @@ ma.uiUtil.stageRender = function(pComponent, cComponent, opt_pElement) {
  * @param {goog.ui.Component} newpage the new page.
  */
 ma.uiUtil.changePage = function(newpage) {
+  'use strict';
  ma.uiUtil.logger_.finest('ChangePage called:');
+ /** @type {string} */
+ var qstr;
+ /** @type {goog.Uri.QueryData} */
+ var qd;
   if (ma.pages.currentPage !== undefined && ma.pages.currentPage !== newpage) {
     goog.dom.removeChildren(ma.GLOBAL_primaryContainer);
     ma.pages.currentPage.exitDocument();
@@ -55,12 +61,10 @@ ma.uiUtil.changePage = function(newpage) {
     newpage.render(ma.GLOBAL_primaryContainer);
     ma.pages.currentPage = newpage;
   }
-  if (typeof ma.pages.currentPage.processQueryStr === 'function'){
-    /** @type {string} */
-    var qstr = location.hash;
-    qstr = qstr.substr(qstr.indexOf('?')+1);
-    /** @type {goog.Uri.QueryData} */
-    var qd = new goog.Uri.QueryData(qstr);
+  if (typeof ma.pages.currentPage.processQueryStr === 'function') {
+    qstr = window.location.hash;
+    qstr = qstr.substr(qstr.indexOf('?') + 1);
+    qd = new goog.Uri.QueryData(qstr);
     ma.pages.currentPage.processQueryStr(qd);
   }
 };
@@ -71,6 +75,7 @@ ma.uiUtil.changePage = function(newpage) {
  * @return {string} the resource action string.
  */
 ma.uiUtil.buildResourceActionString = function(resource, action) {
+  'use strict';
   return '&spwfResource=' + resource + '&spwfAction=' + action;
 };
 
@@ -79,6 +84,7 @@ ma.uiUtil.buildResourceActionString = function(resource, action) {
  * @return {boolean} is authenticated.
  */
 ma.uiUtil.authenticate = function() {
+  'use strict';
  ma.uiUtil.logger_.finest('authenticate called:');
   if (goog.net.cookies.get('session_id') === undefined) {
     return false;
@@ -94,14 +100,15 @@ ma.uiUtil.loginPending = false;
  * @param {goog.events.Event} e the event.
  */
 ma.uiUtil.navCallback = function(e) {
+  'use strict';
  ma.uiUtil.logger_.finest('navCallback called:' + e.token);
   if (e.token === 'LOGIN' && ma.uiUtil.loginPending) { return; }
   if (ma.uiUtil.authenticate()) {
     ma.uiUtil.dispatcher(e.token);
     ma.uiUtil.loginPending = false;
   } else {
-    app.TARGET_PAGE = location.hash.substr(1);
-    location.hash = 'LOGIN';
+    app.TARGET_PAGE = window.location.hash.substr(1);
+    window.location.hash = 'LOGIN';
     ma.uiUtil.loginPending = true;
     ma.pages.dispatchEvent(new ma.plEvent('LOGIN'));
   }
@@ -112,21 +119,30 @@ ma.uiUtil.navCallback = function(e) {
  *
  */
 ma.uiUtil.dispatcher = function(request_) {
- ma.uiUtil.logger_.finest('dispatcher called');
+  'use strict';
+  ma.uiUtil.logger_.finest('dispatcher called');
   /** @type {goog.Uri} */
   var urlData = goog.Uri.parse(request_);
   /** @type {string}*/
   var key;
   /** @type {Object} */
   var qdObject = {};
-  for (key in urlData.queryData_.getKeys()) {
+  /** @type {Array} */
+  var keys = urlData.queryData_.getKeys();
+  /** @type {number} */
+  var keyLength = keys.length;
+  /** @type {number} */
+  var keyNdx;
+  /** @type {string} */
+  var keyName;
+  for (keyNdx = 0; keyNdx < keyLength; keyNdx++) {
+    key = keys[keyNdx];
     qdObject.key = urlData.queryData_.getValues(key);
   }
-  if (urlData.path_ == undefined || urlData.path_ == '') {
+  if (urlData.path_ === undefined || urlData.path_ === '') {
     urlData.path_ = 'MainLauncher';
   }
   ma.pages.dispatchEvent(new ma.plEvent(urlData.path_, qdObject));
-
 };
 
 
@@ -138,7 +154,7 @@ goog.require('goog.events.EventTarget');
  */
 ma.pages = new goog.events.EventTarget();
 ma.pages.addEventListener('TEST',
-    function(e) { alert('test'); }, false);
+    function(e) { alert('pages.TEST running'); }, false);
 
 /**
  * @constructor
@@ -146,6 +162,7 @@ ma.pages.addEventListener('TEST',
  * @param {Object|string=} opt_payload the payload.
  */
 ma.plEvent = function(opt_type, opt_payload) {
+  'use strict';
   this.type = opt_type || 'EVENT';
   this.payload = opt_payload;
 };

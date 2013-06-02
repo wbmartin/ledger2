@@ -26,6 +26,7 @@ goog.provide('ma.ServerCall');
  * @param {Object} opt_caller the original caller.
  */
 ma.ServerCall = function(URL, opt_caller) {
+
   /** @type {string} */
   this.url = URL;
   /** @type {string} */
@@ -51,6 +52,7 @@ ma.ServerCall.pendingServerCalls = 0;
  */
 ma.ServerCall.prototype.responseHandlerWrapper =
  function(responseHandler, caller, e) {
+
   caller.logger_.finest('handlerWrapper');
   if (ma.ServerCall.pendingServerCalls > 0) {
     ma.ServerCall.pendingServerCalls--;
@@ -65,8 +67,10 @@ ma.ServerCall.prototype.responseHandlerWrapper =
  * @param {string} queryStr the query String to send.
  */
 ma.ServerCall.prototype.make = function(responseHandler, queryStr) {
+
   this.logger_.finest('server call made');
   ma.ServerCall.pendingServerCalls++;
+  /** @type {Function} */
   var wrapperPartial = goog.partial(this.responseHandlerWrapper,
       responseHandler, this.caller);
   goog.net.XhrIo.send(this.url, wrapperPartial,

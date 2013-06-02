@@ -29,12 +29,12 @@ goog.require('goog.events.KeyHandler');
 goog.require('goog.events.KeyHandler.EventType');
 goog.require('goog.net.XhrIo');
 goog.require('goog.ui.Component');
-goog.require('ma.pages');
+goog.require('ma.AccessGroupSOY');
 goog.require('ma.ServerCall');
+goog.require('ma.pages');
 goog.require('ma.uiUtil');
 goog.require('ma.uiUtilForm');
 goog.require('ma.uiUtilFormInput');
-goog.require('ma.AccessGroupSOY');
 
 
 
@@ -45,6 +45,7 @@ goog.require('ma.AccessGroupSOY');
  * @constructor
  */
 ma.AccessGroups = function(opt_domHelper) {
+
   goog.ui.Component.call(this, opt_domHelper);
 
 
@@ -81,6 +82,7 @@ goog.inherits(ma.AccessGroups, goog.ui.Component);
  * Creates an initial DOM representation for the component.
  */
 ma.AccessGroups.prototype.createDom = function() {
+
   this.logger_.finest('createDom Called');
   this.decorateInternal(this.dom_.createElement('div'));
 };
@@ -93,6 +95,7 @@ ma.AccessGroups.prototype.createDom = function() {
  *    text, if any will be used as the component's label.
  */
 ma.AccessGroups.prototype.decorateInternal = function(element) {
+
   this.logger_.finest('decorateInternal Called');
   this.setElementInternal(element);
   this.pageRow = goog.dom.createDom('div', {'class': 'row'});
@@ -104,9 +107,11 @@ ma.AccessGroups.prototype.decorateInternal = function(element) {
   this.accessGroupsTable.render(this.accessGroupsList);
   this.accessGroupsTable.columns_ = [
     {src: 'profile_name', displayName: 'Profile Name'},
-    { displayName: 'I want to', 
-      src: function(accessGroup){
-        return soy.renderAsFragment(ma.AccessGroupSOY.iWantTo, accessGroup);
+    { displayName: 'I want to',
+      src: function(accessGroup) {
+        return soy.renderAsFragment(ma.AccessGroupSOY.iWantTo,
+            {w: accessGroup});
+        // variable must be wrapped for soy advanced optimizations
       }
     }
 
@@ -120,6 +125,7 @@ ma.AccessGroups.prototype.decorateInternal = function(element) {
 
 /** @override */
 ma.AccessGroups.prototype.dispose = function() {
+
   this.logger_.finest('dispose Called');
   goog.base(this, 'dispose');
   this.eh_.dispose();
@@ -131,6 +137,7 @@ ma.AccessGroups.prototype.dispose = function() {
  * Called when component's element is known to be in the document.
  */
 ma.AccessGroups.prototype.enterDocument = function() {
+
   this.logger_.finest('enterDocument Called');
   goog.base(this, 'enterDocument');
 };
@@ -141,6 +148,7 @@ ma.AccessGroups.prototype.enterDocument = function() {
  * document.
  */
 ma.AccessGroups.prototype.exitDocument = function() {
+
   this.logger_.finest('exitDocument Called');
   goog.base(this, 'exitDocument');
 };
@@ -151,6 +159,7 @@ ma.AccessGroups.prototype.exitDocument = function() {
  *
  */
 ma.AccessGroups.prototype.selectAccessGroups = function() {
+
   /** @type {string} */
   var qstr = ma.uiUtil.buildResourceActionString('SECURITY_PROFILE', 'SELECT');
   this.serverCall = new ma.ServerCall(this.serverURL, this);
@@ -164,14 +173,18 @@ ma.AccessGroups.prototype.selectAccessGroups = function() {
  *
  */
 ma.AccessGroups.prototype.handleSelectAccessGroupsResponse = function(e) {
+
   this.logger_.finest('handler called');
   /** @type {Object} */
-    var obj = e.target.getResponseJson();
+  var obj = e.target.getResponseJson();
+  /** @type {number} */
+  var rowNdx;
+  /** @type {number} */
+  var rowCount;
+
     if (!obj['SERVER_SIDE_FAIL']) {
-      /** @type {number} */
-      var rowNdx = 0;
-      /** @type {number} */
-      var rowCount = obj.rows.length;
+      rowNdx = 0;
+      rowCount = obj.rows.length;
       this.accessGroupsTable.clearData();
       for (rowNdx = 0; rowNdx < rowCount; rowNdx++) {
         this.accessGroupsTable.data_.push(obj.rows[rowNdx]);
@@ -182,14 +195,15 @@ ma.AccessGroups.prototype.handleSelectAccessGroupsResponse = function(e) {
 };
 /**
  *
- * @param {goog.Uri.QueryData} qd the query data object
- */ 
-ma.AccessGroups.prototype.processQueryStr = function(queryData){
-  if(queryData.containsKey('security_profile_id')){
+ * @param {goog.Uri.QueryData} queryData the query data object.
+ */
+ma.AccessGroups.prototype.processQueryStr = function(queryData) {
+
+  if (queryData.containsKey('security_profile_id')) {
   alert(queryData.get('security_profile_id'));
   }
 
-}
+};
 
 ma.pages.addEventListener('AccessGroup',
     function(e) {

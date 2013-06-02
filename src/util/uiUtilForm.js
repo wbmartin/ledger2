@@ -33,8 +33,9 @@ goog.require('ma.uiUtil');
  */
 
 ma.uiUtilForm = function(opt_resource, opt_action, opt_domHelper) {
+
   goog.ui.Component.call(this, opt_domHelper);
-  this.inputs = new Array();
+  this.inputs = [];
   /** @type {string} */
   this.resource = opt_resource || '';
   /** @type {string} */
@@ -63,13 +64,15 @@ goog.inherits(ma.uiUtilForm, goog.ui.Component);
  * @param {string} style the form style.
  */
 ma.uiUtilForm.prototype.setFormStyle = function(style) {
-this.formStyle_ = style;
+
+  this.formStyle_ = style;
 };
 
 /**
  * Creates an initial DOM representation for the component.
  */
 ma.uiUtilForm.prototype.createDom = function() {
+
   this.logger_.finest('createDom Called');
   this.decorateInternal(this.dom_.createDom('form', this.formStyle_));
 };
@@ -82,11 +85,16 @@ ma.uiUtilForm.prototype.createDom = function() {
  * @param {Element} element the form to decorate.
  */
 ma.uiUtilForm.prototype.decorateInternal = function(element) {
+
   this.logger_.finest('decorateInternal Called');
   this.setElementInternal(element);
+  /** @type {Element} */
   var fs = goog.dom.createDom('fieldset', null);
+  /** @type {number} */
   var rowCount = this.inputs.length;
-  for (var i = 0; i < rowCount; i++) {
+  /** @type {number} */
+  var i;
+  for (i = 0; i < rowCount; i++) {
     ma.uiUtil.stageRender(this, this.inputs[i], fs);
   }
   goog.dom.appendChild(this.element_, fs);
@@ -96,6 +104,7 @@ ma.uiUtilForm.prototype.decorateInternal = function(element) {
 
 /** @override */
 ma.uiUtilForm.prototype.dispose = function() {
+
   this.logger_.finest('dispose Called');
   this.eh_.dispose();
   if (!this.isDisposed()) {
@@ -109,6 +118,7 @@ ma.uiUtilForm.prototype.dispose = function() {
  * Called when component's element is known to be in the document.
  */
 ma.uiUtilForm.prototype.enterDocument = function() {
+
   this.logger_.finest('enterDocument Called');
   goog.base(this, 'enterDocument');
 };
@@ -119,6 +129,7 @@ ma.uiUtilForm.prototype.enterDocument = function() {
  * document.
  */
 ma.uiUtilForm.prototype.exitDocument = function() {
+
   this.logger_.finest('exitDocument Called');
   goog.base(this, 'exitDocument');
 };
@@ -127,8 +138,12 @@ ma.uiUtilForm.prototype.exitDocument = function() {
  * @param {...(Object|string|Array|NodeList)} var_args inputs to add.
  */
 ma.uiUtilForm.prototype.addInput = function(var_args) {
+
+  /** @type {number} */
   var inputCount = arguments.length;
-  for (var ndx = 0; ndx < inputCount; ndx++) {
+  /** @type {number}*/
+  var ndx;
+  for (ndx = 0; ndx < inputCount; ndx++) {
     this.inputs.push(arguments[ndx]);
   }
 };
@@ -139,9 +154,27 @@ ma.uiUtilForm.prototype.addInput = function(var_args) {
  */
 ma.uiUtilForm.prototype.getFormDataString = function() {
 
+  /** @type {string} */
   var qdstr = ma.uiUtil.buildResourceActionString(this.resource, this.action);
   return goog.dom.forms.getFormDataString(
       /** @type {HTMLFormElement}*/ (this.element_)) + qdstr;
 };
 
+/**
+ * @param {Object} bindObj the object to bind.
+ */
+ma.uiUtilForm.prototype.bind = function(bindObj) {
 
+  /** @type {number} */
+  var inptNdx;
+  /** @type {number} */
+  var inptCount = this.inputs.length;
+  /** @type {string} */
+  var fieldId;
+  for (inptNdx = 0; inptNdx < inptCount; inptNdx++) {
+    fieldId = this.inputs[inptNdx].inptName;
+    if (typeof bindObj[fieldId] !== 'undefined') {
+      this.inputs[inptNdx].input.value = bindObj[fieldId];
+    }
+  }
+};

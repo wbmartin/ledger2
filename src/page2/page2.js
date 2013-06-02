@@ -138,7 +138,7 @@ ma.Page2.prototype.exitDocument = function() {
  * @private
  */
 ma.Page2.prototype.onKolfIconClicked_ = function(event) {
-alert('ok');
+//alert('ok');
   };
 
 

@@ -3,9 +3,9 @@
  *Login
  */
 /**
- @param security_profile_id the profile identifier.
-*/
+ * @param w the profile identifier, wrapped in an object for soy/closure advanced optimizations.
+ */
 {template .iWantTo}
 
-<a href="#AccessGroup?security_profile_id={$security_profile_id}">Edit</a>
+<a href="#AccessGroup?security_profile_id={$w['security_profile_id']}">Edit</a>
 {/template}
