@@ -113,17 +113,20 @@ ma.uiUtilFormInput.prototype.decorateInternal = function(element) {
   }else {
     this.input = goog.dom.createDom('select', {'name': this.inptName});
   }
+  if (this.inputType === 'hidden'){
+    goog.dom.appendChild(this.element_, this.input);
+  }else{
+    this.helpBlock = goog.dom.createDom('p', {'class': 'help-block'});
 
-  this.helpBlock = goog.dom.createDom('p', {'class': 'help-block'});
+    goog.dom.classes.add(this.label, 'control-label');
+    goog.dom.classes.add(this.input, 'input-xlarge');
 
-  goog.dom.classes.add(this.label, 'control-label');
-  goog.dom.classes.add(this.input, 'input-xlarge');
-
-  this.controlsDiv = goog.dom.createDom('div', {'class': 'controls'},
+    this.controlsDiv = goog.dom.createDom('div', {'class': 'controls'},
       this.input, this.helpBlock);
 
-  goog.dom.appendChild(this.element_, this.label);
-  goog.dom.appendChild(this.element_, this.controlsDiv);
+    goog.dom.appendChild(this.element_, this.label);
+    goog.dom.appendChild(this.element_, this.controlsDiv);
+  } 
 };
 
 /** @override */

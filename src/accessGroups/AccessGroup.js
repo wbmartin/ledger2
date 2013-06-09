@@ -95,7 +95,13 @@ ma.AccessGroups.prototype.createDom = function() {
  *    text, if any will be used as the component's label.
  */
 ma.AccessGroups.prototype.decorateInternal = function(element) {
+  /** @type {ma.uiUtilFormInput} */
+  this.profileName =  new ma.uiUtilFormInput('Profile name', 'profile_name');
 
+  /** @type {ma.uiUtilFormInput} */
+  this.lastUpdateDate = new ma.uiUtilFormInput('', 'last_update','hidden');
+
+  
   this.logger_.finest('decorateInternal Called');
   this.setElementInternal(element);
   this.pageRow = goog.dom.createDom('div', {'class': 'row'});
@@ -116,6 +122,12 @@ ma.AccessGroups.prototype.decorateInternal = function(element) {
     }
 
   ];
+  /** @type {ma.uiUtilForm} */
+  this.f1 = new ma.uiUtilForm('SECURITY_PROFILE','INSERT');
+  this.f1.addInput(this.profileName, this.lastUpdateDate);
+  //goog.dom.appendChild(this.accessGroupsEditPage,this.f1);
+  ma.uiUtil.stageRender(this,  this.f1, this.accessGroupsEditPage);
+
   goog.dom.appendChild(this.pageRow, this.accessGroupsList);
   goog.dom.appendChild(this.pageRow, this.accessGroupsEditPage);
   goog.dom.appendChild(this.element_, this.pageRow);

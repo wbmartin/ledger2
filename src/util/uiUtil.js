@@ -28,13 +28,14 @@ goog.require('ma.CONST');
 ma.uiUtil.logger_ = goog.debug.Logger.getLogger('ma.uiUtil');
 ma.uiUtil.logger_.setLevel(ma.CONST_DEFAULT_LOG_LEVEL);
 /**
- *
- * @param {goog.ui.Component} pComponent the child.
+ * This method will createdom elements without adding them to the element
+ * Essentiall adding Child component to parent compoenent and inserting 
+ * the opt pelement
+ * @param {goog.ui.Component} pComponent the parent.
  * @param {goog.ui.Component} cComponent the child.
  * @param {Element} opt_pElement the element to add.
  */
 ma.uiUtil.stageRender = function(pComponent, cComponent, opt_pElement) {
-  'use strict';
   ma.uiUtil.logger_.finest('StageRender called:');
   cComponent.createDom();
   opt_pElement = opt_pElement || pComponent.getElement();
@@ -47,7 +48,6 @@ ma.uiUtil.stageRender = function(pComponent, cComponent, opt_pElement) {
  * @param {goog.ui.Component} newpage the new page.
  */
 ma.uiUtil.changePage = function(newpage) {
-  'use strict';
  ma.uiUtil.logger_.finest('ChangePage called:');
  /** @type {string} */
  var qstr;
@@ -75,8 +75,7 @@ ma.uiUtil.changePage = function(newpage) {
  * @return {string} the resource action string.
  */
 ma.uiUtil.buildResourceActionString = function(resource, action) {
-  'use strict';
-  return '&spwfResource=' + resource + '&spwfAction=' + action;
+  return 'spwfResource=' + resource + '&spwfAction=' + action;
 };
 
 
@@ -84,7 +83,6 @@ ma.uiUtil.buildResourceActionString = function(resource, action) {
  * @return {boolean} is authenticated.
  */
 ma.uiUtil.authenticate = function() {
-  'use strict';
  ma.uiUtil.logger_.finest('authenticate called:');
   if (goog.net.cookies.get('session_id') === undefined) {
     return false;
@@ -100,7 +98,6 @@ ma.uiUtil.loginPending = false;
  * @param {goog.events.Event} e the event.
  */
 ma.uiUtil.navCallback = function(e) {
-  'use strict';
  ma.uiUtil.logger_.finest('navCallback called:' + e.token);
   if (e.token === 'LOGIN' && ma.uiUtil.loginPending) { return; }
   if (ma.uiUtil.authenticate()) {
@@ -119,7 +116,6 @@ ma.uiUtil.navCallback = function(e) {
  *
  */
 ma.uiUtil.dispatcher = function(request_) {
-  'use strict';
   ma.uiUtil.logger_.finest('dispatcher called');
   /** @type {goog.Uri} */
   var urlData = goog.Uri.parse(request_);
@@ -162,7 +158,6 @@ ma.pages.addEventListener('TEST',
  * @param {Object|string=} opt_payload the payload.
  */
 ma.plEvent = function(opt_type, opt_payload) {
-  'use strict';
   this.type = opt_type || 'EVENT';
   this.payload = opt_payload;
 };

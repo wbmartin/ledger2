@@ -138,7 +138,6 @@ ma.uiUtilForm.prototype.exitDocument = function() {
  * @param {...(Object|string|Array|NodeList)} var_args inputs to add.
  */
 ma.uiUtilForm.prototype.addInput = function(var_args) {
-
   /** @type {number} */
   var inputCount = arguments.length;
   /** @type {number}*/
@@ -153,18 +152,26 @@ ma.uiUtilForm.prototype.addInput = function(var_args) {
  * @return {string} the forms query data string.
  */
 ma.uiUtilForm.prototype.getFormDataString = function() {
-
-  /** @type {string} */
-  var qdstr = ma.uiUtil.buildResourceActionString(this.resource, this.action);
-  return goog.dom.forms.getFormDataString(
-      /** @type {HTMLFormElement}*/ (this.element_)) + qdstr;
+  /** @type {number} */
+  var inptNdx;
+  /** @type {number} */
+  var inptCount = this.inputs.length; 
+  /** @type {string}*/
+  var formDataStr = ma.uiUtil.buildResourceActionString(this.resource, this.action);
+  for (inptNdx = 0; inptNdx < inptCount; inptNdx++){
+    formDataStr += '&' + this.inputs[inptNdx].inptName + 
+      '=' + goog.string.urlEncode(this.inputs[inptNdx].input.value);
+  }
+  //formDataStr = goog.dom.forms.getFormDataString(
+  //    /** @type {HTMLFormElement}*/ (this.element_)) + '&' + 
+        //ma.uiUtil.buildResourceActionString(this.resource, this.action);
+  return formDataStr;
 };
 
 /**
  * @param {Object} bindObj the object to bind.
  */
 ma.uiUtilForm.prototype.bind = function(bindObj) {
-
   /** @type {number} */
   var inptNdx;
   /** @type {number} */
