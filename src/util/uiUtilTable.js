@@ -180,7 +180,7 @@ ma.uiUtilTable.prototype.refreshData = function() {
     this.activeRow = goog.dom.createDom('tr');
     for (colNdx = 0; colNdx < this.displayColumnCount; colNdx++) {
       if (typeof (this.columns_[colNdx].src) === 'function') {
-        displayFragment = this.columns_[colNdx].src(this.data_[rowNdx]);
+        displayFragment = this.columns_[colNdx].src(this.data_[rowNdx], rowNdx);
       } else {
         displayFragment = this.data_[rowNdx][this.columns_[colNdx].src];
       }

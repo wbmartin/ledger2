@@ -160,6 +160,34 @@ ma.uiUtilFormInput.prototype.exitDocument = function() {
 };
 
 
+/**
+ * @param {Object} val the value to set
+ *
+ */
+ma.uiUtilFormInput.prototype.setValue = function(){
+  this.input.value = val;
+};
+
+/**
+ *
+ * @return {Object} the value to return
+ */
+ma.uiUtilFormInput.prototype.getValue = function(){
+  return this.input.value;
+};
+/**
+ *
+ */
+ma.uiUtilFormInput.prototype.clear = function(){
+  this.input.value = '';
+};
+
+
+
+
+
+
+
 
 
 

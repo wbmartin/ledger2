@@ -4,8 +4,9 @@
  */
 /**
  * @param w the profile identifier, wrapped in an object for soy/closure advanced optimizations.
+ * @param ndx the cache identifier.
  */
 {template .iWantTo}
 
-<a href="#AccessGroup?security_profile_id={$w['security_profile_id']}">Edit</a>
+<a href="#AccessGroup?security_profile_id={$w['security_profile_id']}&cacheid={$ndx}">Edit</a>
 {/template}

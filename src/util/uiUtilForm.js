@@ -185,3 +185,18 @@ ma.uiUtilForm.prototype.bind = function(bindObj) {
     }
   }
 };
+
+ma.uiUtilForm.prototype.clear = function() {
+ /** @type {number} */
+  var inptNdx;
+  /** @type {number} */
+  var inptCount = this.inputs.length;
+  /** @type {string} */
+  var fieldId;
+  for (inptNdx = 0; inptNdx < inptCount; inptNdx++) {
+    if (typeof this.inputs[inptNdx].clear === 'function') {
+      this.inputs[inptNdx].clear();
+    }
+  }
+};
+

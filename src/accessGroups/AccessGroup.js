@@ -82,7 +82,6 @@ goog.inherits(ma.AccessGroups, goog.ui.Component);
  * Creates an initial DOM representation for the component.
  */
 ma.AccessGroups.prototype.createDom = function() {
-
   this.logger_.finest('createDom Called');
   this.decorateInternal(this.dom_.createElement('div'));
 };
@@ -114,9 +113,9 @@ ma.AccessGroups.prototype.decorateInternal = function(element) {
   this.accessGroupsTable.columns_ = [
     {src: 'profile_name', displayName: 'Profile Name'},
     { displayName: 'I want to',
-      src: function(accessGroup) {
+      src: function(accessGroup, ndx) {
         return soy.renderAsFragment(ma.AccessGroupSOY.iWantTo,
-            {w: accessGroup});
+            {w: accessGroup, ndx:ndx});
         // variable must be wrapped for soy advanced optimizations
       }
     }
@@ -175,7 +174,7 @@ ma.AccessGroups.prototype.selectAccessGroups = function() {
   /** @type {string} */
   var qstr = ma.uiUtil.buildResourceActionString('SECURITY_PROFILE', 'SELECT');
   this.serverCall = new ma.ServerCall(this.serverURL, this);
-  this.serverCall.make(this.handleSelectAccessGroupsResponse, qstr);
+  this.serverCall.make(this.handleSelectResponse, qstr);
 };
 
 
@@ -184,38 +183,61 @@ ma.AccessGroups.prototype.selectAccessGroups = function() {
  *
  *
  */
-ma.AccessGroups.prototype.handleSelectAccessGroupsResponse = function(e) {
-
+ma.AccessGroups.prototype.handleSelectResponse = function(e) {
   this.logger_.finest('handler called');
   /** @type {Object} */
   var obj = e.target.getResponseJson();
-  /** @type {number} */
-  var rowNdx;
-  /** @type {number} */
-  var rowCount;
 
     if (!obj['SERVER_SIDE_FAIL']) {
       rowNdx = 0;
       rowCount = obj.rows.length;
       this.accessGroupsTable.clearData();
-      for (rowNdx = 0; rowNdx < rowCount; rowNdx++) {
-        this.accessGroupsTable.data_.push(obj.rows[rowNdx]);
-        this.logger_.finest('test worked');
-      }
+      this.accessGroupsTable.data_ = obj.rows;
     }
   this.accessGroupsTable.refreshData();
 };
+
+
+
 /**
  *
  * @param {goog.Uri.QueryData} queryData the query data object.
  */
 ma.AccessGroups.prototype.processQueryStr = function(queryData) {
-
-  if (queryData.containsKey('security_profile_id')) {
-  alert(queryData.get('security_profile_id'));
+  var securityProfileId = queryData.get('security_profile_id');
+  var cacheId = queryData.get('cacheid');
+  if (securityProfileId !== undefined) {
+    if (cacheId !== undefined && 
+        this.accessGroupsTable.data_[cacheId] !== undefined &&
+        securityProfileId == this.accessGroupsTable.data_[cacheId].security_profile_id){
+      this.f1.bind(this.accessGroupsTable.data_[cacheId]);
+    } else {
+      this.selectById(securityProfileId);
+    }
+  } else {
+    this.f1.clear();
   }
+};
+
+/**
+ *@param {number} id the identifier toquery
+ */
+ma.AccessGroups.prototype.selectById = function (id){
+var qstr = ma.uiUtil.buildResourceActionString('SECURITY_PROFILE', 'SELECT');
+ qstr += '&where_clause=security_profile_id%3D' + id;
+  this.serverCall = new ma.ServerCall(this.serverURL, this);
+  this.serverCall.make(this.handleSelectByIdResponse, qstr);
 
 };
+/**
+ * @param {goog.events.Event} e the event.
+ */
+ma.AccessGroups.prototype.handleSelectByIdResponse = function(e){
+  var obj = e.target.getResponseJson();
+  this.f1.bind(obj.rows[0]);
+  
+};
+
 
 ma.pages.addEventListener('AccessGroup',
     function(e) {
