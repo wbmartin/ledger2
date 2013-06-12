@@ -100,6 +100,9 @@ ma.AccessGroups.prototype.decorateInternal = function(element) {
   /** @type {ma.uiUtilFormInput} */
   this.lastUpdateDate = new ma.uiUtilFormInput('', 'last_update','hidden');
 
+  /** @type {ma.uiUtilFormInput} */
+  //this.
+
   
   this.logger_.finest('decorateInternal Called');
   this.setElementInternal(element);
@@ -107,7 +110,7 @@ ma.AccessGroups.prototype.decorateInternal = function(element) {
   this.accessGroupsList = goog.dom.createDom('div',
       {'class': 'span6'});
   this.accessGroupsEditPage = goog.dom.createDom('div',
-      {'class': 'span6', 'style': 'background:red'},'ok');
+      {'class': 'span6', 'style': ''});
   this.accessGroupsTable = new ma.uiUtilTable();
   this.accessGroupsTable.render(this.accessGroupsList);
   this.accessGroupsTable.columns_ = [
@@ -124,7 +127,12 @@ ma.AccessGroups.prototype.decorateInternal = function(element) {
   /** @type {ma.uiUtilForm} */
   this.f1 = new ma.uiUtilForm('SECURITY_PROFILE','INSERT');
   this.f1.addInput(this.profileName, this.lastUpdateDate);
-  //goog.dom.appendChild(this.accessGroupsEditPage,this.f1);
+  this.saveButton = goog.dom.createDom('button', 
+      {'class:': 'btn btn-large btn-primary', 'type':'button'},'Save');
+  this.f1.addAction(this.saveButton);
+
+  //this.eh_.listen(this.saveButton,
+  //    goog.events.EventType.CLICK, this.save);
   ma.uiUtil.stageRender(this,  this.f1, this.accessGroupsEditPage);
 
   goog.dom.appendChild(this.pageRow, this.accessGroupsList);
@@ -148,7 +156,6 @@ ma.AccessGroups.prototype.dispose = function() {
  * Called when component's element is known to be in the document.
  */
 ma.AccessGroups.prototype.enterDocument = function() {
-
   this.logger_.finest('enterDocument Called');
   goog.base(this, 'enterDocument');
 };
@@ -159,7 +166,6 @@ ma.AccessGroups.prototype.enterDocument = function() {
  * document.
  */
 ma.AccessGroups.prototype.exitDocument = function() {
-
   this.logger_.finest('exitDocument Called');
   goog.base(this, 'exitDocument');
 };
@@ -170,7 +176,6 @@ ma.AccessGroups.prototype.exitDocument = function() {
  *
  */
 ma.AccessGroups.prototype.selectAccessGroups = function() {
-
   /** @type {string} */
   var qstr = ma.uiUtil.buildResourceActionString('SECURITY_PROFILE', 'SELECT');
   this.serverCall = new ma.ServerCall(this.serverURL, this);
@@ -227,8 +232,9 @@ var qstr = ma.uiUtil.buildResourceActionString('SECURITY_PROFILE', 'SELECT');
  qstr += '&where_clause=security_profile_id%3D' + id;
   this.serverCall = new ma.ServerCall(this.serverURL, this);
   this.serverCall.make(this.handleSelectByIdResponse, qstr);
-
 };
+
+
 /**
  * @param {goog.events.Event} e the event.
  */
@@ -236,6 +242,29 @@ ma.AccessGroups.prototype.handleSelectByIdResponse = function(e){
   var obj = e.target.getResponseJson();
   this.f1.bind(obj.rows[0]);
   
+};
+
+/**
+ *
+ *
+ */
+ma.AccessGroups.prototype.save = function(){
+  /** @type {string} */
+  var qdstr = this.f1.gerFormDataStr();
+
+  this.serverCall = new ma.ServerCall(this.serverURL, this);
+  this.serverCall.make(this.handleSave, qstr);
+
+}
+
+/**
+ * @param {goog.events.Event} e the event.
+ *
+ *
+ */
+ma.AccessGroups.prototype.handleSaveResponse = function(e){
+alert('handleSaveResponseReturned');
+
 };
 
 

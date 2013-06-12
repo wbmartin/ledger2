@@ -35,7 +35,10 @@ goog.require('ma.uiUtil');
 ma.uiUtilForm = function(opt_resource, opt_action, opt_domHelper) {
 
   goog.ui.Component.call(this, opt_domHelper);
+  /** @type {Array} */
   this.inputs = [];
+  /** @type {Array */
+  this.actions = [];
   /** @type {string} */
   this.resource = opt_resource || '';
   /** @type {string} */
@@ -89,22 +92,31 @@ ma.uiUtilForm.prototype.decorateInternal = function(element) {
   this.logger_.finest('decorateInternal Called');
   this.setElementInternal(element);
   /** @type {Element} */
-  var fs = goog.dom.createDom('fieldset', null);
+  this.fieldSet = goog.dom.createDom('fieldset', null);
+  /** @type {Element}*/
+  this.actionSet = goog.dom.createDom('div',{'class':'form-actions'});
   /** @type {number} */
-  var rowCount = this.inputs.length;
+  var itemCount = this.inputs.length;
   /** @type {number} */
   var i;
-  for (i = 0; i < rowCount; i++) {
-    ma.uiUtil.stageRender(this, this.inputs[i], fs);
+  for (i = 0; i < itemCount; i++) {
+    //TODO may need to optionally append Child if Element is found
+    ma.uiUtil.stageRender(this, this.inputs[i], this.fieldSet);
   }
-  goog.dom.appendChild(this.element_, fs);
-
+  itemCount = this.actions.length;
+  for (i = 0; i < itemCount; i++){
+    //TODO may need to optionally stageRender if Element is not found
+    goog.dom.appendChild(this.actionSet, this.actions[i]);
+  }
+  if (itemCount > 0){
+    goog.dom.appendChild(this.fieldSet, this.actionSet);
+  }
+  goog.dom.appendChild(this.element_, this.fieldSet);
 };
 
 
 /** @override */
 ma.uiUtilForm.prototype.dispose = function() {
-
   this.logger_.finest('dispose Called');
   this.eh_.dispose();
   if (!this.isDisposed()) {
@@ -118,7 +130,6 @@ ma.uiUtilForm.prototype.dispose = function() {
  * Called when component's element is known to be in the document.
  */
 ma.uiUtilForm.prototype.enterDocument = function() {
-
   this.logger_.finest('enterDocument Called');
   goog.base(this, 'enterDocument');
 };
@@ -129,7 +140,6 @@ ma.uiUtilForm.prototype.enterDocument = function() {
  * document.
  */
 ma.uiUtilForm.prototype.exitDocument = function() {
-
   this.logger_.finest('exitDocument Called');
   goog.base(this, 'exitDocument');
 };
@@ -140,12 +150,27 @@ ma.uiUtilForm.prototype.exitDocument = function() {
 ma.uiUtilForm.prototype.addInput = function(var_args) {
   /** @type {number} */
   var inputCount = arguments.length;
-  /** @type {number}*/
+  /** @type {number} */
   var ndx;
   for (ndx = 0; ndx < inputCount; ndx++) {
     this.inputs.push(arguments[ndx]);
   }
 };
+
+/**
+ *
+ *
+ *
+ */
+ma.uiUtilForm.prototype.addAction = function(var_args){
+/** @type {number} */
+  var actionCount = arguments.length;
+  /** @type {number} */
+  var ndx;
+  for (ndx = 0; ndx < actionCount; ndx++) {
+    this.actions.push(arguments[ndx]);
+  }
+}
 
 /**
  *
@@ -184,6 +209,7 @@ ma.uiUtilForm.prototype.bind = function(bindObj) {
       this.inputs[inptNdx].input.value = bindObj[fieldId];
     }
   }
+  this.action = 'UPDATE';
 };
 
 ma.uiUtilForm.prototype.clear = function() {
@@ -198,5 +224,17 @@ ma.uiUtilForm.prototype.clear = function() {
       this.inputs[inptNdx].clear();
     }
   }
+  this.action = 'INSERT';
+};
+
+
+/**
+ * test if the form is prepared for insert or update
+ *
+ * @param {string} qstr the query string 
+ */
+ma.uiUtilForm.insertOrUpdate = function(qstr){
+  return 'INSERT';
+
 };
 

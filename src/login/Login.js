@@ -79,7 +79,6 @@ goog.inherits(ma.Login, goog.ui.Component);
  * Creates an initial DOM representation for the component.
  */
 ma.Login.prototype.createDom = function() {
-
   this.logger_.finest('createDom Called');
   this.decorateInternal(this.dom_.createElement('div'));
 };
@@ -104,14 +103,13 @@ ma.Login.prototype.decorateInternal = function(element) {
   this.f1 = new ma.uiUtilForm('SECURITY_USER', 'AUTHENTICATE');
   this.f1.addInput(this.userid, this.password);
   this.f1.setFormStyle('form-horizontal');
+  this.loginButton = goog.dom.createDom('button', 
+      {'class': 'btn btn-large btn-primary', 'type':'button'}, 'Login');
+  this.f1.addAction(this.loginButton);
   ma.uiUtil.stageRender(this, this.f1, this.container);
-
   this.f1.bind({'user_id': 'ledger', 'password': 'ledger'});
-
-  this.loginButton = goog.dom.createDom('button', null, 'Login');
-  goog.dom.appendChild(this.container, this.loginButton);
+  this.f1.action='AUTHENTICATE'
   goog.dom.appendChild(this.element_, this.container);
-
   this.eh_.listen(this.loginButton,
       goog.events.EventType.CLICK, this.submitLoginCreds);
   //this.kh_ = new goog.events.KeyHandler(element);
