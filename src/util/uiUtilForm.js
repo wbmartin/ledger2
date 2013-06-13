@@ -33,16 +33,19 @@ goog.require('ma.uiUtil');
  */
 
 ma.uiUtilForm = function(opt_resource, opt_action, opt_domHelper) {
-
   goog.ui.Component.call(this, opt_domHelper);
   /** @type {Array} */
   this.inputs = [];
-  /** @type {Array */
+  /** @type {Array} */
   this.actions = [];
   /** @type {string} */
   this.resource = opt_resource || '';
   /** @type {string} */
   this.action = opt_action || '';
+  /** @type {Array} */
+  this.hiddens = [];
+  /** @type {?number} */
+  this.cacheid = null;
   /**
    * Event handler for this object.
    * @type {goog.events.EventHandler}
@@ -174,6 +177,15 @@ ma.uiUtilForm.prototype.addAction = function(var_args){
 
 /**
  *
+ * @param {string} key the identifier.
+ * @param {Object} value the value.
+ */
+ma.uiUtilForm.prototype.addHidden = function (key,value){
+ this.hiddens.push({k:key, v:value})
+}
+
+/**
+ *
  * @return {string} the forms query data string.
  */
 ma.uiUtilForm.prototype.getFormDataString = function() {
@@ -187,6 +199,16 @@ ma.uiUtilForm.prototype.getFormDataString = function() {
     formDataStr += '&' + this.inputs[inptNdx].inptName + 
       '=' + goog.string.urlEncode(this.inputs[inptNdx].input.value);
   }
+  inptCount = this.hiddens.length;
+  for (inptNdx = 0; inptNdx < inptCount; inptNdx++){
+    formDataStr += '&' + this.hiddens[inptNdx].k + 
+      '=' + goog.string.urlEncode(this.hiddens[inptNdx].v);
+  }
+  if (this.cacheid){
+    formDataStr += '&cacheid=' + this.cacheid;
+  }
+
+
   //formDataStr = goog.dom.forms.getFormDataString(
   //    /** @type {HTMLFormElement}*/ (this.element_)) + '&' + 
         //ma.uiUtil.buildResourceActionString(this.resource, this.action);
@@ -195,18 +217,27 @@ ma.uiUtilForm.prototype.getFormDataString = function() {
 
 /**
  * @param {Object} bindObj the object to bind.
+ * @param {number=} opt_cacheId the cacheID.
  */
-ma.uiUtilForm.prototype.bind = function(bindObj) {
+ma.uiUtilForm.prototype.bind = function(bindObj, opt_cacheId) {
   /** @type {number} */
   var inptNdx;
   /** @type {number} */
   var inptCount = this.inputs.length;
   /** @type {string} */
   var fieldId;
+  this.cacheid = opt_cacheId;
   for (inptNdx = 0; inptNdx < inptCount; inptNdx++) {
     fieldId = this.inputs[inptNdx].inptName;
     if (typeof bindObj[fieldId] !== 'undefined') {
       this.inputs[inptNdx].input.value = bindObj[fieldId];
+    }
+  }
+  inptCount = this.hiddens.length;
+  for (inptNdx = 0; inptNdx < inptCount; inptNdx++){
+    fieldId = this.hiddens[inptNdx].k;
+    if (typeof bindObj[fieldId] !== 'undefined') {
+      this.hiddens[inptNdx].v = bindObj[fieldId];
     }
   }
   this.action = 'UPDATE';
@@ -224,17 +255,12 @@ ma.uiUtilForm.prototype.clear = function() {
       this.inputs[inptNdx].clear();
     }
   }
+  inptCount = this.inputs.length;
+  for (inptNdx = 0; inptNdx < inptCount; inptNdx++) {
+    this.hiddens[inptNdx].v= null;      
+  }
+
   this.action = 'INSERT';
 };
 
-
-/**
- * test if the form is prepared for insert or update
- *
- * @param {string} qstr the query string 
- */
-ma.uiUtilForm.insertOrUpdate = function(qstr){
-  return 'INSERT';
-
-};
 

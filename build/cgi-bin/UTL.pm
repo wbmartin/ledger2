@@ -141,6 +141,9 @@ sub packageResults(){
       $json->{$key} = $value;	
     }
   }
+  if(exists $params->{'cacheid'}){
+    $json->{'cacheid'} = $params->{'cacheid'};
+  }
   print STDERR "Package Successful\n" if($debug);
 }else{#if no successful connection or statement build issue, package the error
   $json->{"errorMsg"} =$sth;

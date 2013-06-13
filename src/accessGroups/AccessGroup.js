@@ -111,9 +111,9 @@ ma.AccessGroups.prototype.decorateInternal = function(element) {
       {'class': 'span6'});
   this.accessGroupsEditPage = goog.dom.createDom('div',
       {'class': 'span6', 'style': ''});
-  this.accessGroupsTable = new ma.uiUtilTable();
-  this.accessGroupsTable.render(this.accessGroupsList);
-  this.accessGroupsTable.columns_ = [
+  this.selectorTable = new ma.uiUtilTable();
+  this.selectorTable.render(this.accessGroupsList);
+  this.selectorTable.columns_ = [
     {src: 'profile_name', displayName: 'Profile Name'},
     { displayName: 'I want to',
       src: function(accessGroup, ndx) {
@@ -126,13 +126,15 @@ ma.AccessGroups.prototype.decorateInternal = function(element) {
   ];
   /** @type {ma.uiUtilForm} */
   this.f1 = new ma.uiUtilForm('SECURITY_PROFILE','INSERT');
-  this.f1.addInput(this.profileName, this.lastUpdateDate);
+  this.f1.addInput(this.profileName);
+  this.f1.addHidden('last_update');
+  this.f1.addHidden('security_profile_id');
   this.saveButton = goog.dom.createDom('button', 
       {'class:': 'btn btn-large btn-primary', 'type':'button'},'Save');
   this.f1.addAction(this.saveButton);
 
-  //this.eh_.listen(this.saveButton,
-  //    goog.events.EventType.CLICK, this.save);
+  this.eh_.listen(this.saveButton,
+      goog.events.EventType.CLICK, this.save);
   ma.uiUtil.stageRender(this,  this.f1, this.accessGroupsEditPage);
 
   goog.dom.appendChild(this.pageRow, this.accessGroupsList);
@@ -192,14 +194,13 @@ ma.AccessGroups.prototype.handleSelectResponse = function(e) {
   this.logger_.finest('handler called');
   /** @type {Object} */
   var obj = e.target.getResponseJson();
-
-    if (!obj['SERVER_SIDE_FAIL']) {
+  if (!obj['SERVER_SIDE_FAIL']) {
       rowNdx = 0;
       rowCount = obj.rows.length;
-      this.accessGroupsTable.clearData();
-      this.accessGroupsTable.data_ = obj.rows;
-    }
-  this.accessGroupsTable.refreshData();
+      this.selectorTable.clearData();
+      this.selectorTable.data_ = obj.rows;
+  }
+  this.selectorTable.refreshData();
 };
 
 
@@ -213,9 +214,9 @@ ma.AccessGroups.prototype.processQueryStr = function(queryData) {
   var cacheId = queryData.get('cacheid');
   if (securityProfileId !== undefined) {
     if (cacheId !== undefined && 
-        this.accessGroupsTable.data_[cacheId] !== undefined &&
-        securityProfileId == this.accessGroupsTable.data_[cacheId].security_profile_id){
-      this.f1.bind(this.accessGroupsTable.data_[cacheId]);
+        this.selectorTable.data_[cacheId] !== undefined &&
+        securityProfileId == this.selectorTable.data_[cacheId].security_profile_id){
+      this.f1.bind(this.selectorTable.data_[cacheId], cacheId);
     } else {
       this.selectById(securityProfileId);
     }
@@ -250,11 +251,9 @@ ma.AccessGroups.prototype.handleSelectByIdResponse = function(e){
  */
 ma.AccessGroups.prototype.save = function(){
   /** @type {string} */
-  var qdstr = this.f1.gerFormDataStr();
-
+  var qstr = this.f1.getFormDataString();
   this.serverCall = new ma.ServerCall(this.serverURL, this);
-  this.serverCall.make(this.handleSave, qstr);
-
+  this.serverCall.make(this.handleSaveResponse, qstr);
 }
 
 /**
@@ -263,8 +262,11 @@ ma.AccessGroups.prototype.save = function(){
  *
  */
 ma.AccessGroups.prototype.handleSaveResponse = function(e){
-alert('handleSaveResponseReturned');
-
+  var obj = e.target.getResponseJson();
+  this.f1.bind(obj.rows[0], obj.cacheid);
+  if(obj.cacheid && this.selectorTable.data_[obj.cacheid].security_profile_id == obj.rows[0].security_profile_id ){
+    this.selectorTable.data_[obj.cacheid] = obj.rows[0];
+  }
 };
 
 
