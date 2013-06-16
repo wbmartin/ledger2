@@ -37,7 +37,6 @@ goog.require('ma.uiUtilForm');
 goog.require('ma.uiUtilFormInput');
 
 
-
 /**
  * @param {goog.dom.DomHelper=} opt_domHelper DOM helper to use.
  *
@@ -95,15 +94,15 @@ ma.AccessGroups.prototype.createDom = function() {
  */
 ma.AccessGroups.prototype.decorateInternal = function(element) {
   /** @type {ma.uiUtilFormInput} */
-  this.profileName =  new ma.uiUtilFormInput('Profile name', 'profile_name');
+  this.profileName = new ma.uiUtilFormInput('Profile name', 'profile_name');
 
   /** @type {ma.uiUtilFormInput} */
-  this.lastUpdateDate = new ma.uiUtilFormInput('', 'last_update','hidden');
+  this.lastUpdateDate = new ma.uiUtilFormInput('', 'last_update', 'hidden');
 
   /** @type {ma.uiUtilFormInput} */
   //this.
 
-  
+
   this.logger_.finest('decorateInternal Called');
   this.setElementInternal(element);
   this.pageRow = goog.dom.createDom('div', {'class': 'row'});
@@ -118,24 +117,24 @@ ma.AccessGroups.prototype.decorateInternal = function(element) {
     { displayName: 'I want to',
       src: function(accessGroup, ndx) {
         return soy.renderAsFragment(ma.AccessGroupSOY.iWantTo,
-            {w: accessGroup, ndx:ndx});
+            {w: accessGroup, ndx: ndx});
         // variable must be wrapped for soy advanced optimizations
       }
     }
 
   ];
   /** @type {ma.uiUtilForm} */
-  this.f1 = new ma.uiUtilForm('SECURITY_PROFILE','INSERT');
+  this.f1 = new ma.uiUtilForm('SECURITY_PROFILE', 'INSERT');
   this.f1.addInput(this.profileName);
   this.f1.addHidden('last_update');
   this.f1.addHidden('security_profile_id');
-  this.saveButton = goog.dom.createDom('button', 
-      {'class:': 'btn btn-large btn-primary', 'type':'button'},'Save');
+  this.saveButton = goog.dom.createDom('button',
+      {'class:': 'btn btn-large btn-primary', 'type': 'button'},'Save');
   this.f1.addAction(this.saveButton);
 
   this.eh_.listen(this.saveButton,
       goog.events.EventType.CLICK, this.save);
-  ma.uiUtil.stageRender(this,  this.f1, this.accessGroupsEditPage);
+  ma.uiUtil.stageRender(this, this.f1, this.accessGroupsEditPage);
 
   goog.dom.appendChild(this.pageRow, this.accessGroupsList);
   goog.dom.appendChild(this.pageRow, this.accessGroupsEditPage);
@@ -194,9 +193,8 @@ ma.AccessGroups.prototype.handleSelectResponse = function(e) {
   this.logger_.finest('handler called');
   /** @type {Object} */
   var obj = e.target.getResponseJson();
+
   if (!obj['SERVER_SIDE_FAIL']) {
-      rowNdx = 0;
-      rowCount = obj.rows.length;
       this.selectorTable.clearData();
       this.selectorTable.data_ = obj.rows;
   }
@@ -210,13 +208,17 @@ ma.AccessGroups.prototype.handleSelectResponse = function(e) {
  * @param {goog.Uri.QueryData} queryData the query data object.
  */
 ma.AccessGroups.prototype.processQueryStr = function(queryData) {
-  var securityProfileId = queryData.get('security_profile_id');
-  var cacheId = queryData.get('cacheid');
-  if (securityProfileId !== undefined) {
-    if (cacheId !== undefined && 
-        this.selectorTable.data_[cacheId] !== undefined &&
-        securityProfileId == this.selectorTable.data_[cacheId].security_profile_id){
-      this.f1.bind(this.selectorTable.data_[cacheId], cacheId);
+  /** @type {number} */
+  var securityProfileId = /** @type {number} */
+        (queryData.get('security_profile_id')) || -1;
+  /** @type {number} */
+  var cacheId = /** @type {number}*/ (queryData.get('cacheid')) || -1;
+  if (securityProfileId !== -1) {
+    if (cacheId !== -1 &&
+      this.selectorTable.data_[cacheId] !== undefined &&
+      securityProfileId === this.selectorTable.data_[cacheId].
+      security_profile_id) {
+        this.f1.bind(this.selectorTable.data_[cacheId], cacheId);
     } else {
       this.selectById(securityProfileId);
     }
@@ -226,9 +228,9 @@ ma.AccessGroups.prototype.processQueryStr = function(queryData) {
 };
 
 /**
- *@param {number} id the identifier toquery
+ * @param {?number} id the identifier toquery.
  */
-ma.AccessGroups.prototype.selectById = function (id){
+ma.AccessGroups.prototype.selectById = function(id) {
 var qstr = ma.uiUtil.buildResourceActionString('SECURITY_PROFILE', 'SELECT');
  qstr += '&where_clause=security_profile_id%3D' + id;
   this.serverCall = new ma.ServerCall(this.serverURL, this);
@@ -239,32 +241,45 @@ var qstr = ma.uiUtil.buildResourceActionString('SECURITY_PROFILE', 'SELECT');
 /**
  * @param {goog.events.Event} e the event.
  */
-ma.AccessGroups.prototype.handleSelectByIdResponse = function(e){
+ma.AccessGroups.prototype.handleSelectByIdResponse = function(e) {
   var obj = e.target.getResponseJson();
   this.f1.bind(obj.rows[0]);
-  
+
 };
 
 /**
  *
  *
  */
-ma.AccessGroups.prototype.save = function(){
+ma.AccessGroups.prototype.save = function() {
   /** @type {string} */
   var qstr = this.f1.getFormDataString();
   this.serverCall = new ma.ServerCall(this.serverURL, this);
   this.serverCall.make(this.handleSaveResponse, qstr);
-}
+};
+
+/**
+ * @typedef {{
+ *      security_profile_id: number
+ *  }}
+ */
+ma.SECURITY_PROFILE;
 
 /**
  * @param {goog.events.Event} e the event.
  *
  *
  */
-ma.AccessGroups.prototype.handleSaveResponse = function(e){
+ma.AccessGroups.prototype.handleSaveResponse = function(e) {
+  /** @type {Object} */
   var obj = e.target.getResponseJson();
-  this.f1.bind(obj.rows[0], obj.cacheid);
-  if(obj.cacheid && this.selectorTable.data_[obj.cacheid].security_profile_id == obj.rows[0].security_profile_id ){
+  /** @type {ma.SECURITY_PROFILE} */
+  var securityProfile =  /** @type {ma.SECURITY_PROFILE} */(obj.rows[0]);
+
+  this.f1.bind(securityProfile, obj.cacheid);
+  if (obj.cacheid &&
+      this.selectorTable.data_[obj.cacheid].security_profile_id ===
+      obj.rows[0].security_profile_id) {
     this.selectorTable.data_[obj.cacheid] = obj.rows[0];
   }
 };

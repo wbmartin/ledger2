@@ -97,7 +97,7 @@ ma.uiUtilForm.prototype.decorateInternal = function(element) {
   /** @type {Element} */
   this.fieldSet = goog.dom.createDom('fieldset', null);
   /** @type {Element}*/
-  this.actionSet = goog.dom.createDom('div',{'class':'form-actions'});
+  this.actionSet = goog.dom.createDom('div', {'class': 'form-actions'});
   /** @type {number} */
   var itemCount = this.inputs.length;
   /** @type {number} */
@@ -107,11 +107,11 @@ ma.uiUtilForm.prototype.decorateInternal = function(element) {
     ma.uiUtil.stageRender(this, this.inputs[i], this.fieldSet);
   }
   itemCount = this.actions.length;
-  for (i = 0; i < itemCount; i++){
+  for (i = 0; i < itemCount; i++) {
     //TODO may need to optionally stageRender if Element is not found
     goog.dom.appendChild(this.actionSet, this.actions[i]);
   }
-  if (itemCount > 0){
+  if (itemCount > 0) {
     goog.dom.appendChild(this.fieldSet, this.actionSet);
   }
   goog.dom.appendChild(this.element_, this.fieldSet);
@@ -163,9 +163,9 @@ ma.uiUtilForm.prototype.addInput = function(var_args) {
 /**
  *
  *
- *
+ * @param {...(Object|string|Array|NodeList)} var_args the actions to add.
  */
-ma.uiUtilForm.prototype.addAction = function(var_args){
+ma.uiUtilForm.prototype.addAction = function(var_args) {
 /** @type {number} */
   var actionCount = arguments.length;
   /** @type {number} */
@@ -173,16 +173,16 @@ ma.uiUtilForm.prototype.addAction = function(var_args){
   for (ndx = 0; ndx < actionCount; ndx++) {
     this.actions.push(arguments[ndx]);
   }
-}
+};
 
 /**
  *
  * @param {string} key the identifier.
- * @param {Object} value the value.
+ * @param {Object=} value the value.
  */
-ma.uiUtilForm.prototype.addHidden = function (key,value){
- this.hiddens.push({k:key, v:value})
-}
+ma.uiUtilForm.prototype.addHidden = function(key, value) {
+ this.hiddens.push({k: key, v: value});
+};
 
 /**
  *
@@ -192,25 +192,26 @@ ma.uiUtilForm.prototype.getFormDataString = function() {
   /** @type {number} */
   var inptNdx;
   /** @type {number} */
-  var inptCount = this.inputs.length; 
+  var inptCount = this.inputs.length;
   /** @type {string}*/
-  var formDataStr = ma.uiUtil.buildResourceActionString(this.resource, this.action);
-  for (inptNdx = 0; inptNdx < inptCount; inptNdx++){
-    formDataStr += '&' + this.inputs[inptNdx].inptName + 
+  var formDataStr =
+    ma.uiUtil.buildResourceActionString(this.resource, this.action);
+  for (inptNdx = 0; inptNdx < inptCount; inptNdx++) {
+    formDataStr += '&' + this.inputs[inptNdx].inptName +
       '=' + goog.string.urlEncode(this.inputs[inptNdx].input.value);
   }
   inptCount = this.hiddens.length;
-  for (inptNdx = 0; inptNdx < inptCount; inptNdx++){
-    formDataStr += '&' + this.hiddens[inptNdx].k + 
+  for (inptNdx = 0; inptNdx < inptCount; inptNdx++) {
+    formDataStr += '&' + this.hiddens[inptNdx].k +
       '=' + goog.string.urlEncode(this.hiddens[inptNdx].v);
   }
-  if (this.cacheid){
+  if (this.cacheid) {
     formDataStr += '&cacheid=' + this.cacheid;
   }
 
 
   //formDataStr = goog.dom.forms.getFormDataString(
-  //    /** @type {HTMLFormElement}*/ (this.element_)) + '&' + 
+  //    /** @type {HTMLFormElement}*/ (this.element_)) + '&' +
         //ma.uiUtil.buildResourceActionString(this.resource, this.action);
   return formDataStr;
 };
@@ -226,7 +227,7 @@ ma.uiUtilForm.prototype.bind = function(bindObj, opt_cacheId) {
   var inptCount = this.inputs.length;
   /** @type {string} */
   var fieldId;
-  this.cacheid = opt_cacheId;
+  this.cacheid = opt_cacheId || null;
   for (inptNdx = 0; inptNdx < inptCount; inptNdx++) {
     fieldId = this.inputs[inptNdx].inptName;
     if (typeof bindObj[fieldId] !== 'undefined') {
@@ -234,7 +235,7 @@ ma.uiUtilForm.prototype.bind = function(bindObj, opt_cacheId) {
     }
   }
   inptCount = this.hiddens.length;
-  for (inptNdx = 0; inptNdx < inptCount; inptNdx++){
+  for (inptNdx = 0; inptNdx < inptCount; inptNdx++) {
     fieldId = this.hiddens[inptNdx].k;
     if (typeof bindObj[fieldId] !== 'undefined') {
       this.hiddens[inptNdx].v = bindObj[fieldId];
@@ -242,7 +243,10 @@ ma.uiUtilForm.prototype.bind = function(bindObj, opt_cacheId) {
   }
   this.action = 'UPDATE';
 };
-
+/**
+ *
+ *
+ */
 ma.uiUtilForm.prototype.clear = function() {
  /** @type {number} */
   var inptNdx;
@@ -257,7 +261,7 @@ ma.uiUtilForm.prototype.clear = function() {
   }
   inptCount = this.inputs.length;
   for (inptNdx = 0; inptNdx < inptCount; inptNdx++) {
-    this.hiddens[inptNdx].v= null;      
+    this.hiddens[inptNdx].v = null;
   }
 
   this.action = 'INSERT';

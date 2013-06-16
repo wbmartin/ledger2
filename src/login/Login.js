@@ -103,12 +103,12 @@ ma.Login.prototype.decorateInternal = function(element) {
   this.f1 = new ma.uiUtilForm('SECURITY_USER', 'AUTHENTICATE');
   this.f1.addInput(this.userid, this.password);
   this.f1.setFormStyle('form-horizontal');
-  this.loginButton = goog.dom.createDom('button', 
-      {'class': 'btn btn-large btn-primary', 'type':'button'}, 'Login');
+  this.loginButton = goog.dom.createDom('button',
+      {'class': 'btn btn-large btn-primary', 'type': 'button'}, 'Login');
   this.f1.addAction(this.loginButton);
   ma.uiUtil.stageRender(this, this.f1, this.container);
   this.f1.bind({'user_id': 'ledger', 'password': 'ledger'});
-  this.f1.action='AUTHENTICATE'
+  this.f1.action = 'AUTHENTICATE';
   goog.dom.appendChild(this.element_, this.container);
   this.eh_.listen(this.loginButton,
       goog.events.EventType.CLICK, this.submitLoginCreds);

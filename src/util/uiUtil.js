@@ -29,7 +29,7 @@ ma.uiUtil.logger_ = goog.debug.Logger.getLogger('ma.uiUtil');
 ma.uiUtil.logger_.setLevel(ma.CONST_DEFAULT_LOG_LEVEL);
 /**
  * This method will createdom elements without adding them to the element
- * Essentiall adding Child component to parent compoenent and inserting 
+ * Essentiall adding Child component to parent compoenent and inserting
  * the opt pelement
  * @param {goog.ui.Component} pComponent the parent.
  * @param {goog.ui.Component} cComponent the child.
@@ -150,7 +150,9 @@ goog.require('goog.events.EventTarget');
  */
 ma.pages = new goog.events.EventTarget();
 ma.pages.addEventListener('TEST',
-    function(e) { alert('pages.TEST running'); }, false);
+    function(e) {
+    //  alrt('pages.TEST running');
+    }, false);
 
 /**
  * @constructor

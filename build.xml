@@ -68,6 +68,7 @@
       <arg line = "--nomen"/>
       <arg line = "--sloppy"/>
       <arg line = "--plusplus"/>
+      <arg line = "--sub"/>
       <arg line = "${jsfiles}"/>
       <!--arg line = " src/util/uiUtilForm.js"/-->
     </exec>

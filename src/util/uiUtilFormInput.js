@@ -113,9 +113,9 @@ ma.uiUtilFormInput.prototype.decorateInternal = function(element) {
   }else {
     this.input = goog.dom.createDom('select', {'name': this.inptName});
   }
-  if (this.inputType === 'hidden'){
+  if (this.inputType === 'hidden') {
     goog.dom.appendChild(this.element_, this.input);
-  }else{
+  }else {
     this.helpBlock = goog.dom.createDom('p', {'class': 'help-block'});
 
     goog.dom.classes.add(this.label, 'control-label');
@@ -126,7 +126,7 @@ ma.uiUtilFormInput.prototype.decorateInternal = function(element) {
 
     goog.dom.appendChild(this.element_, this.label);
     goog.dom.appendChild(this.element_, this.controlsDiv);
-  } 
+  }
 };
 
 /** @override */
@@ -161,24 +161,24 @@ ma.uiUtilFormInput.prototype.exitDocument = function() {
 
 
 /**
- * @param {Object} val the value to set
+ * @param {Object} val the value to set.
  *
  */
-ma.uiUtilFormInput.prototype.setValue = function(){
+ma.uiUtilFormInput.prototype.setValue = function(val) {
   this.input.value = val;
 };
 
 /**
  *
- * @return {Object} the value to return
+ * @return {Object} the value to return.
  */
-ma.uiUtilFormInput.prototype.getValue = function(){
+ma.uiUtilFormInput.prototype.getValue = function() {
   return this.input.value;
 };
 /**
  *
  */
-ma.uiUtilFormInput.prototype.clear = function(){
+ma.uiUtilFormInput.prototype.clear = function() {
   this.input.value = '';
 };
 
