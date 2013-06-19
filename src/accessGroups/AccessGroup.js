@@ -210,7 +210,7 @@ ma.AccessGroups.prototype.handleSelectResponse = function(e) {
 ma.AccessGroups.prototype.processQueryStr = function(queryData) {
   /** @type {number} */
   var securityProfileId = /** @type {number} */
-        (queryData.get('security_profile_id')) || -1;
+        parseInt(queryData.get('security_profile_id'),10) || -1;
   /** @type {number} */
   var cacheId = /** @type {number}*/ (queryData.get('cacheid')) || -1;
   if (securityProfileId !== -1) {
@@ -243,7 +243,7 @@ var qstr = ma.uiUtil.buildResourceActionString('SECURITY_PROFILE', 'SELECT');
  */
 ma.AccessGroups.prototype.handleSelectByIdResponse = function(e) {
   var obj = e.target.getResponseJson();
-  this.f1.bind(obj.rows[0]);
+  this.f1.bind(obj.rows[0], obj.cacheid);
 
 };
 
@@ -281,6 +281,7 @@ ma.AccessGroups.prototype.handleSaveResponse = function(e) {
       this.selectorTable.data_[obj.cacheid].security_profile_id ===
       obj.rows[0].security_profile_id) {
     this.selectorTable.data_[obj.cacheid] = obj.rows[0];
+    this.selectorTable.refreshRow(obj.cacheid);
   }
 };
 

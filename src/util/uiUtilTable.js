@@ -48,14 +48,22 @@ ma.uiUtilTable = function(opt_domHelper) {
   this.logger_ = goog.debug.Logger.getLogger('ma.uiUtilTable');
   this.logger_.setLevel(ma.CONST_DEFAULT_LOG_LEVEL);
   this.logger_.finest('Constructor Called');
-  /** @type {Array}
-   *  @private
+  /**
+   * @type {Array}
+   * @private
    */
   this.data_ = [];
-  /** @type {Array}
-   *  @private
+  /**
+   * @type {Array}
+   * @private
    */
   this.columns_ = [];
+
+  /**
+   * @type {Array}
+   * @private
+   */
+  this.tableRows_ = [];
 
 };
 goog.inherits(ma.uiUtilTable, goog.ui.Component);
@@ -171,16 +179,13 @@ ma.uiUtilTable.prototype.refreshData = function() {
   this.displayColumnCount = this.columns_.length;
   /** @type {Element} */
   var tempTBody = goog.dom.createDom('tbody');
+  this.tableRows_ = [];
   /** @type {Element} */
-  var tdSpan = null;
-  /** @type {string} */
-  var displayFragment;
-  /** @type {Element} */
-  var tempRow;
-
+  var tr;
   for (rowNdx = 0; rowNdx < this.localRowCount; rowNdx++) {
-    tempRow = this.buildDataRow(rowNdx);
-    goog.dom.appendChild(tempTBody, tempRow);
+    this.tableRows_[rowNdx] = goog.dom.createDom('tr');
+    this.buildDataRow(this.tableRows_[rowNdx], rowNdx);
+    goog.dom.appendChild(tempTBody, this.tableRows_[rowNdx]);
   }
 
   this.refreshHeader();
@@ -191,27 +196,46 @@ ma.uiUtilTable.prototype.refreshData = function() {
 };
 
 /**
- *
- * @param {number} rowNdx the ndx of the row to build;.
- * @return {Element} the tablerow in createDom form.
+ * @param {Element} rowElement the row to add to.
+ * @param {number} rowNdx the ndx of the row to build.
  */
-ma.uiUtilTable.prototype.buildDataRow = function(rowNdx) {
-  /** @type {Element} */
-  var row = goog.dom.createDom('tr');
-   for (colNdx = 0; colNdx < this.displayColumnCount; colNdx++) {
-      if (typeof (this.columns_[colNdx].src) === 'function') {
-        displayFragment = this.columns_[colNdx].src(this.data_[rowNdx], rowNdx);
-      } else {
-        displayFragment = this.data_[rowNdx][this.columns_[colNdx].src];
-      }
-      tdSpan = goog.dom.createDom('span', null, displayFragment);
-      goog.dom.appendChild(row,
-          goog.dom.createDom('td', null, tdSpan)
-      );
-    }
-   return row;
+ma.uiUtilTable.prototype.buildDataRow = function(rowElement, rowNdx) {
+  /** @type {?Element} */
+  var tdSpan;
+  goog.dom.removeChildren(rowElement);
+  /** @type {number} */
+  var colNdx;
+  for (colNdx = 0; colNdx < this.displayColumnCount; colNdx++) {
+    tdSpan = this.buildCellSpan(rowNdx, colNdx);
+    goog.dom.appendChild(rowElement, goog.dom.createDom('td', null, tdSpan));
+  }
+};
+
+/**
+ *
+ * @param {number} row the row to refresh.
+ */
+ma.uiUtilTable.prototype.refreshRow = function(row)  {
+  this.buildDataRow(this.tableRows_[row], row);
+
+};
 
 
+/**
+ *
+ * @param {number} row the row id.
+ * @param {number} col the column id.
+ * @return {Element} the span.
+ */
+ma.uiUtilTable.prototype.buildCellSpan = function(row, col) {
+/** @type {string} */
+  var displayFragment;
+  if (typeof (this.columns_[col].src) === 'function') {
+     displayFragment = this.columns_[col].src(this.data_[row], row);
+  } else {
+     displayFragment = this.data_[row][this.columns_[col].src];
+  }
+  return goog.dom.createDom('span', null, displayFragment);
 };
 
 /**
