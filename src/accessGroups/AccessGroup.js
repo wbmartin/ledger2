@@ -72,6 +72,12 @@ ma.AccessGroups = function(opt_domHelper) {
   this.logger_.setLevel(ma.CONST_DEFAULT_LOG_LEVEL);
   this.logger_.finest('Constructor Called');
   this.serverURL = ma.CONST_SERVER_CONTEXT + '/server.pl';
+  /** @type {Date} */
+  this.selectorCacheRefreshed;
+  /** @type {number} */
+  this.selectorCacheExpireMs = 60000;
+  /** @type {string} */
+  this.stdOrderBy = 'profile_name';
 };
 goog.inherits(ma.AccessGroups, goog.ui.Component);
 
@@ -95,14 +101,6 @@ ma.AccessGroups.prototype.createDom = function() {
 ma.AccessGroups.prototype.decorateInternal = function(element) {
   /** @type {ma.uiUtilFormInput} */
   this.profileName = new ma.uiUtilFormInput('Profile name', 'profile_name');
-
-  /** @type {ma.uiUtilFormInput} */
-  this.lastUpdateDate = new ma.uiUtilFormInput('', 'last_update', 'hidden');
-
-  /** @type {ma.uiUtilFormInput} */
-  //this.
-
-
   this.logger_.finest('decorateInternal Called');
   this.setElementInternal(element);
   this.pageRow = goog.dom.createDom('div', {'class': 'row'});
@@ -129,11 +127,16 @@ ma.AccessGroups.prototype.decorateInternal = function(element) {
   this.f1.addHidden('last_update');
   this.f1.addHidden('security_profile_id');
   this.saveButton = goog.dom.createDom('button',
-      {'class:': 'btn btn-large btn-primary', 'type': 'button'},'Save');
+      {'class:': 'btn btn-large btn-primary', 'type': 'button'},'Add');
   this.f1.addAction(this.saveButton);
-
   this.eh_.listen(this.saveButton,
       goog.events.EventType.CLICK, this.save);
+  this.clearButton = goog.dom.createDom('button',
+      {'class:': 'btn btn-large', 'type': 'button'},'Clear');
+  this.f1.addAction(this.clearButton);
+  this.eh_.listen(this.clearButton,
+      goog.events.EventType.CLICK, this.clearForm);
+
   ma.uiUtil.stageRender(this, this.f1, this.accessGroupsEditPage);
 
   goog.dom.appendChild(this.pageRow, this.accessGroupsList);
@@ -145,7 +148,6 @@ ma.AccessGroups.prototype.decorateInternal = function(element) {
 
 /** @override */
 ma.AccessGroups.prototype.dispose = function() {
-
   this.logger_.finest('dispose Called');
   goog.base(this, 'dispose');
   this.eh_.dispose();
@@ -174,13 +176,16 @@ ma.AccessGroups.prototype.exitDocument = function() {
 
 /**
  *
- *
+ * @param {string=} opt_orderby the orderby clause.
  */
-ma.AccessGroups.prototype.selectAccessGroups = function() {
+ma.AccessGroups.prototype.selectAccessGroups = function(opt_orderby) {
+  this.logger_.finest('selectAccessGroups Called');
   /** @type {string} */
   var qstr = ma.uiUtil.buildResourceActionString('SECURITY_PROFILE', 'SELECT');
+  var orderby = opt_orderby || this.stdOrderBy;
+  qstr += '&orderby_clause=' + orderby;
   this.serverCall = new ma.ServerCall(this.serverURL, this);
-  this.serverCall.make(this.handleSelectResponse, qstr);
+  this.serverCall.make(this.hdlRspSelect, qstr);
 };
 
 
@@ -189,11 +194,10 @@ ma.AccessGroups.prototype.selectAccessGroups = function() {
  *
  *
  */
-ma.AccessGroups.prototype.handleSelectResponse = function(e) {
-  this.logger_.finest('handler called');
+ma.AccessGroups.prototype.hdlRspSelect = function(e) {
+  this.logger_.finest('handle Response Select called');
   /** @type {Object} */
   var obj = e.target.getResponseJson();
-
   if (!obj['SERVER_SIDE_FAIL']) {
       this.selectorTable.clearData();
       this.selectorTable.data_ = obj.rows;
@@ -208,9 +212,10 @@ ma.AccessGroups.prototype.handleSelectResponse = function(e) {
  * @param {goog.Uri.QueryData} queryData the query data object.
  */
 ma.AccessGroups.prototype.processQueryStr = function(queryData) {
+  this.logger_.finest('processQueryStr called');
   /** @type {number} */
   var securityProfileId = /** @type {number} */
-        parseInt(queryData.get('security_profile_id'),10) || -1;
+        parseInt(queryData.get('security_profile_id'), 10) || -1;
   /** @type {number} */
   var cacheId = /** @type {number}*/ (queryData.get('cacheid')) || -1;
   if (securityProfileId !== -1) {
@@ -231,20 +236,21 @@ ma.AccessGroups.prototype.processQueryStr = function(queryData) {
  * @param {?number} id the identifier toquery.
  */
 ma.AccessGroups.prototype.selectById = function(id) {
-var qstr = ma.uiUtil.buildResourceActionString('SECURITY_PROFILE', 'SELECT');
- qstr += '&where_clause=security_profile_id%3D' + id;
+  this.logger_.finest('selectById called');
+  var qstr = ma.uiUtil.buildResourceActionString('SECURITY_PROFILE', 'SELECT');
+  qstr += '&where_clause=security_profile_id%3D' + id;
   this.serverCall = new ma.ServerCall(this.serverURL, this);
-  this.serverCall.make(this.handleSelectByIdResponse, qstr);
+  this.serverCall.make(this.hdlRspSelectById, qstr);
 };
 
 
 /**
  * @param {goog.events.Event} e the event.
  */
-ma.AccessGroups.prototype.handleSelectByIdResponse = function(e) {
+ma.AccessGroups.prototype.hdlRspSelectById = function(e) {
+  this.logger_.finest('hdlRspSelectById called');
   var obj = e.target.getResponseJson();
   this.f1.bind(obj.rows[0], obj.cacheid);
-
 };
 
 /**
@@ -252,10 +258,11 @@ ma.AccessGroups.prototype.handleSelectByIdResponse = function(e) {
  *
  */
 ma.AccessGroups.prototype.save = function() {
+  this.logger_.finest('save called');
   /** @type {string} */
   var qstr = this.f1.getFormDataString();
   this.serverCall = new ma.ServerCall(this.serverURL, this);
-  this.serverCall.make(this.handleSaveResponse, qstr);
+  this.serverCall.make(this.hdlRspSave, qstr);
 };
 
 /**
@@ -270,18 +277,57 @@ ma.SECURITY_PROFILE;
  *
  *
  */
-ma.AccessGroups.prototype.handleSaveResponse = function(e) {
+ma.AccessGroups.prototype.hdlRspSave = function(e) {
+  this.logger_.finest('handle Response Save called');
   /** @type {Object} */
   var obj = e.target.getResponseJson();
   /** @type {ma.SECURITY_PROFILE} */
   var securityProfile =  /** @type {ma.SECURITY_PROFILE} */(obj.rows[0]);
+  /** @type {number} */
+  var cacheId = this.selectorTable.update(obj.rows[0],
+      obj.cacheid, 'security_profile_id', obj['spwfAction']);
+  if (obj['spwfAction'] === 'INSERT') {
+    window.location.hash = '#AccessGroup?security_profile_id=' +
+      obj.rows[0]['security_profile_id'] + '&cacheid=' + cacheId;
+  } else {
+    this.f1.bind(obj.rows[0], obj.cacheid);
+  }
+};
 
-  this.f1.bind(securityProfile, obj.cacheid);
-  if (obj.cacheid &&
-      this.selectorTable.data_[obj.cacheid].security_profile_id ===
-      obj.rows[0].security_profile_id) {
-    this.selectorTable.data_[obj.cacheid] = obj.rows[0];
-    this.selectorTable.refreshRow(obj.cacheid);
+/**
+ *
+ *
+ */
+ma.AccessGroups.prototype.clearForm = function() {
+  this.logger_.finest('clearForm');
+  window.location.hash = '#AccessGroup';
+};
+
+/**
+ *
+ *
+ *
+ */
+ma.AccessGroups.prototype.refreshSelectorCache = function() {
+    if (!this.isSelectorCacheValid()) {
+      this.selectAccessGroups();
+      this.selectorCacheRefreshed = new Date();
+    }
+};
+
+
+/**
+ *
+ * @return {boolean} true if cache is valid.
+ */
+ma.AccessGroups.prototype.isSelectorCacheValid = function() {
+/** @type {number} */
+  var cacheAge = new Date() - this.selectorCacheRefreshed;
+  if (this.selectorCacheRefreshed === undefined ||
+      cacheAge > this.selectorCacheExpireMs) {
+        return false;
+  }else {
+        return true;
   }
 };
 
@@ -292,7 +338,7 @@ ma.pages.addEventListener('AccessGroup',
         app.accessGroupsWeb = new ma.AccessGroups();
       }
       ma.uiUtil.changePage(app.accessGroupsWeb);
-      app.accessGroupsWeb.selectAccessGroups();
+      app.accessGroupsWeb.refreshSelectorCache();
     }, false);
 
 

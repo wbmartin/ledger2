@@ -247,6 +247,55 @@ ma.uiUtilTable.prototype.clearData = function() {
   this.data_ = [];
 };
 
+/**
+ *
+ * @param {Object} newObj the row object.
+ * @param {number=} opt_cacheId the expected row Id.
+ * @param {string=} opt_checkField the field to validate on.
+ * @param {string=} opt_type INSERT if add is needed.
+ * @return {number} the table index, useful for inserts.
+ *
+ */
+ma.uiUtilTable.prototype.update = function(newObj, opt_cacheId,
+    opt_checkField, opt_type) {
+      /** @type {number} */
+    var newId;
+  if (opt_type !== 'INSERT' && opt_cacheId &&
+       opt_checkField !== undefined &&
+      this.data_[opt_cacheId][opt_checkField] === newObj[opt_checkField]) {
+    this.data_[opt_cacheId] = newObj;
+    this.refreshRow(opt_cacheId);
+  } else if (opt_type === 'INSERT') {
+    /** @type {number} */
+    newId = this.data_.push(newObj) - 1; //push returns length
+    this.addRowToEndOfDisplay(newId);
+
+  } else { // Look for the checkField's match and set it when found
+    /** @type {number} */
+    var rowNdx;
+    /** @type {number} */
+    var rowCnt = this.data_.length;
+    for (rowNdx = 0; rowNdx < rowCnt; rowNdx++) {
+      if (this.data_[rowNdx][opt_checkField] === newObj[opt_checkField]) {
+        this.data_[rowNdx] = newObj;
+        this.refreshRow(rowNdx);
+      }
+    }
+  }
+  return newId || opt_cacheId || -1;
+};
+
+/**
+ *
+ * @param {number} rowId the rowNdx in the data_ table to add.
+ */
+ma.uiUtilTable.prototype.addRowToEndOfDisplay = function(rowId) {
+  this.tableRows_[rowId] = goog.dom.createDom('tr');
+    this.buildDataRow(this.tableRows_[rowId], rowId);
+    goog.dom.appendChild(this.tBody_, this.tableRows_[rowId]);
+
+};
+
 
 
 

@@ -28,7 +28,7 @@
   </target>
 
 <target name="plovr-debug">
-    <exec executable="java" output="${basedir}/deploy/app-compiled.js" logError="true">
+    <exec executable="java" output="${basedir}/build/app-compiled.js" logError="true">
       <arg line="-jar ${home.dir}/dev/plovr/plovr-eba786b34df9.jar build plovr-debug.config"/>
     </exec> 
   </target>

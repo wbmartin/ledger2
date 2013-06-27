@@ -228,12 +228,14 @@ ma.uiUtilForm.prototype.bind = function(bindObj, opt_cacheId) {
   /** @type {string} */
   var fieldId;
   this.cacheid = opt_cacheId || null;
+  //Inputs
   for (inptNdx = 0; inptNdx < inptCount; inptNdx++) {
     fieldId = this.inputs[inptNdx].inptName;
     if (typeof bindObj[fieldId] !== 'undefined') {
       this.inputs[inptNdx].input.value = bindObj[fieldId];
     }
   }
+  //hiddens
   inptCount = this.hiddens.length;
   for (inptNdx = 0; inptNdx < inptCount; inptNdx++) {
     fieldId = this.hiddens[inptNdx].k;
@@ -242,6 +244,9 @@ ma.uiUtilForm.prototype.bind = function(bindObj, opt_cacheId) {
     }
   }
   this.action = 'UPDATE';
+  if (this.actions[0].innerHTML === 'Add') {
+    this.actions[0].innerHTML = 'Save';
+  }
 };
 /**
  *
@@ -259,12 +264,15 @@ ma.uiUtilForm.prototype.clear = function() {
       this.inputs[inptNdx].clear();
     }
   }
-  inptCount = this.inputs.length;
+  inptCount = this.hiddens.length;
   for (inptNdx = 0; inptNdx < inptCount; inptNdx++) {
     this.hiddens[inptNdx].v = null;
   }
-
   this.action = 'INSERT';
+  if (this.actions[0].innerHTML === 'Save') {
+    this.actions[0].innerHTML = 'Add';
+  }
+
 };
 
 
