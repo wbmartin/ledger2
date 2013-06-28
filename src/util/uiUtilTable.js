@@ -22,6 +22,8 @@ goog.provide('ma.uiUtilTable');
 
 goog.require('goog.debug.Logger');
 goog.require('goog.dom.classes');
+goog.require('goog.ui.Option');
+goog.require('goog.ui.Select');
 goog.require('ma.uiUtil');
 
 /**
@@ -98,6 +100,27 @@ ma.uiUtilTable.prototype.decorateInternal = function(element) {
 
   this.logger_.finest('decorateInternal Called');
   this.wrappingDiv = goog.dom.createDom('div');
+  /** @type {Element} */
+  this.displayRequestCountSelect = goog.dom.createDom('Select',
+      {style: 'width:5em;'});
+  goog.dom.appendChild(this.displayRequestCountSelect,
+      goog.dom.createDom('option', null, '10'));
+  goog.dom.appendChild(this.displayRequestCountSelect,
+      goog.dom.createDom('option', null, '25'));
+  goog.dom.appendChild(this.displayRequestCountSelect,
+      goog.dom.createDom('option', null, '50'));
+  goog.dom.appendChild(this.displayRequestCountSelect,
+      goog.dom.createDom('option', null, 'All'));
+  goog.dom.appendChild(this.wrappingDiv, this.displayRequestCountSelect);
+  this.eh_.listen(this.displayRequestCountSelect,
+      goog.events.EventType.CHANGE, this.refreshData);
+
+
+  this.paginationSpan = goog.dom.createDom('span');
+  goog.dom.appendChild(this.wrappingDiv, this.paginationSpan);
+  /** @type {number} */
+  this.page = 1;
+  /** @type {Element} */
   this.table = element;
   goog.dom.appendChild(this.wrappingDiv, this.table);
   this.setElementInternal(this.wrappingDiv);
@@ -105,7 +128,10 @@ ma.uiUtilTable.prototype.decorateInternal = function(element) {
   this.tHeader_ = goog.dom.createDom('thead');
   goog.dom.appendChild(this.table, this.tHeader_);
   goog.dom.appendChild(this.table, this.tBody_);
+
+
 };
+
 
 
 /** @override */
@@ -182,7 +208,32 @@ ma.uiUtilTable.prototype.refreshData = function() {
   this.tableRows_ = [];
   /** @type {Element} */
   var tr;
-  for (rowNdx = 0; rowNdx < this.localRowCount; rowNdx++) {
+  /** @type {number} */
+  this.startRow;
+  /** @type {number} */
+  this.lastRow;
+  /** @type {number|string} */
+  var displayPerPage = this.displayRequestCountSelect.value;
+
+  //determine start/stop rows
+  if (displayPerPage !== 'All') {
+    displayPerPage = parseInt(displayPerPage, 10);
+    this.startRow = this.page * displayPerPage;
+    this.lastRow = this.startRow + displayPerPage;
+    this.lastRow = (this.lastRow < this.localRowCount) ?
+      this.lastRow : this.localRowCount;
+    this.startRow = (this.startRow < this.lastRow) ?
+      this.startRow : this.lastRow - displayPerPage;
+    this.startRow = (this.startRow > 0) ? this.startRow : 0;
+  } else {
+    this.startRow = 0;
+    this.lastRow = this.localRowCount;
+  }
+
+  this.paginationSpan.innerHTML = 'Showing ' + (this.startRow + 1) +
+    ' thru ' + this.lastRow + ' of ' + this.localRowCount;
+
+  for (rowNdx = this.startRow; rowNdx < this.lastRow; rowNdx++) {
     this.tableRows_[rowNdx] = goog.dom.createDom('tr');
     this.buildDataRow(this.tableRows_[rowNdx], rowNdx);
     goog.dom.appendChild(tempTBody, this.tableRows_[rowNdx]);
